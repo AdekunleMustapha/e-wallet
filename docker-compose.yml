@@ -1,31 +1,58 @@
 services:
-  
-  e-wallet-backend:
+  e-wallet-persistence:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  e-wallet-cache:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Optional: run the app in a container instead of natively.
+  # Start it with: docker compose --profile app up
+  e-wallet-api:
+    profiles: ["app"]
     build:
       context: .
-
-    ports:
-      - "${PORT}:5000"
-
-    env_file:
-      - .env
-    
-    depends_on:
-      - e-wallet-persistence
-
-  e-wallet-persistence:
-    image: postgres:16
-
-    ports:
-      - "${POSTGRES_PORT}:5432"
-
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
+      target: dev
+    env_file: .env
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    
+      # inside the compose network, use service names, not localhost
+      DB_HOST: e-wallet-persistence
+      REDIS_HOST: e-wallet-cache
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules # keep container's node_modules, don't overwrite with host's
+    depends_on:
+      e-wallet-persistence:
+        condition: service_healthy
+      e-wallet-cache:
+        condition: service_healthy
+
 volumes:
-  postgres_data:
+  pgdata:
+  redisdata:

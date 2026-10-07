@@ -1,29 +1,29 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from './modules/users/users.module.js';
+import { ConfigModule } from '@nestjs/config';
+import { RedisModule } from './infrastructure/cache/redis.module';
+import redisConfig from './infrastructure/cache/redis.config';
+import databaseConfig from './infrastructure/database/database.config';
+import { DatabaseModule } from './infrastructure/database/database.module';
+import { HealthModule } from './modules/health/health.module';
+import { WalletModule } from './modules/wallet/wallet.module';
+import appConfig from './shared/config/app.config';
+import { envValidationSchema } from './shared/config/env.validation';
+import loggerConfig from './shared/logger/logger.config';
+import { LoggerModule } from './shared/logger/logger.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('POSTGRES_HOST'),
-        port: configService.get('POSTGRES_PORT'),
-        database: configService.get('POSTGRES_DB'),
-        password: configService.get('POSTGRES_PASSWORD'),
-        username: configService.get('POSTGRES_USER'),
-        entities: [process.env.NODE_ENV === 'production'
-          ? 'dist/**/*.entity.js'
-          : 'src/**/*.entity.ts'],
-        synchronize: false,
-        logging: true
-      })
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [appConfig, databaseConfig, redisConfig, loggerConfig],
+      validationSchema: envValidationSchema,
+      validationOptions: { abortEarly: false },
     }),
-    UsersModule
-  ]
+    LoggerModule,
+    DatabaseModule,
+    RedisModule,
+    HealthModule,
+    WalletModule,
+  ],
 })
 export class AppModule {}
