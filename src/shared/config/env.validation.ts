@@ -33,4 +33,12 @@ export const envValidationSchema = Joi.object({
   LOG_MAX_SIZE: Joi.string().default('20m'),
   LOG_MAX_FILES: Joi.string().default('14d'),
   LOG_ZIPPED_ARCHIVE: Joi.boolean().default(true),
+
+  // SECURITY
+  NIN_PEPPER: Joi.string().when('NODE_ENV', {
+    is: 'development',
+    then: Joi.string().allow('').required(),
+    otherwise: Joi.string().min(32).required()
+  })
+
 });
