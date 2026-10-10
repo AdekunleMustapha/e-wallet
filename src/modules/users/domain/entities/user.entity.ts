@@ -1,11 +1,14 @@
 import { UniqueId } from "src/shared/domain/unique-id";
 import { BVNHash, Email, NINHash, Name } from "../value-objects";
+import { DOB } from "../value-objects/dob.vo";
 
 type UserProps = {
     id?: UniqueId,
     firstName: Name,
     lastName: Name,
-    email:Email,
+    dob: DOB,
+    email: Email,
+    genderId: UniqueId,
     addressId?: UniqueId,
     ninHash?: NINHash,
     bvnHash?: BVNHash,
