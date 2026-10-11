@@ -7,7 +7,7 @@ import { Result } from "src/shared/domain/result";
 export class Email {
     private readonly _value: string;
 
-    constructor(value: string) {
+    private constructor(value: string) {
         this._value = value;
     }
 

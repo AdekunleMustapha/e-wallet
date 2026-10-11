@@ -7,7 +7,7 @@ import { Result } from "src/shared/domain/result";
 export class DOB {
     private readonly _value: Date
 
-    constructor(value: Date) {
+    private constructor(value: Date) {
         this._value = value;
     }
 

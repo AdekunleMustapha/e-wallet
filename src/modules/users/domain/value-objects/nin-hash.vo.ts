@@ -8,7 +8,7 @@ import { Result } from "src/shared/domain/result";
 export class NINHash {
     private readonly _hash: string;
 
-    constructor(hash: string) {
+    private constructor(hash: string) {
         this._hash = hash;
     }
 

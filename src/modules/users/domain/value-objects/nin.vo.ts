@@ -8,7 +8,7 @@ import { Result } from "src/shared/domain/result";
 export class NIN {
     private readonly _value: string;
 
-    constructor(value: string) {
+    private constructor(value: string) {
         this._value = value;
     }
 
@@ -18,7 +18,7 @@ export class NIN {
         return Result.ok(new NIN(value));
     }
 
-    get unwrap(): string {
+    public unwrap(): string {
         return this._value;
     }
 

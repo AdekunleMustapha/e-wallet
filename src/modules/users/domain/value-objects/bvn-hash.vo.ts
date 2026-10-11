@@ -8,7 +8,7 @@ import { ValidationError } from "src/shared/domain/errors";
 export class BVNHash {
     private readonly _hash: string;
 
-    constructor(value: string) {
+    private constructor(value: string) {
         this._hash = value;
     }
 
