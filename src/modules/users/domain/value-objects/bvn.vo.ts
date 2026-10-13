@@ -17,7 +17,7 @@ export class BVN {
         return Result.ok(new BVN(bvn));
     }
 
-    get unwrap(): string {
+    public unwrap(): string {
         return this._value;
     }
 

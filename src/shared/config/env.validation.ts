@@ -39,6 +39,11 @@ export const envValidationSchema = Joi.object({
     is: 'development',
     then: Joi.string().allow('').required(),
     otherwise: Joi.string().min(32).required()
-  })
+  }),
 
+  BVN_PEPPER: Joi.string().when('NODE_ENV', {
+    is: 'development',
+    then: Joi.string().allow('').required(),
+    otherwise: Joi.string().min(32).required()
+  })
 });

@@ -3,7 +3,7 @@ import { Person } from "../entities";
 import { DOB } from "../value-objects/dob.vo";
 import { UniqueId } from "src/shared/domain/unique-id";
 
-export interface PaginationFilters {
+export interface PersonPaginationFilters {
     genderId?: string,
     dob?: DOB,
     addressId?: UniqueId,
@@ -32,7 +32,7 @@ export interface IPersonRepository {
     update(person: Person): Promise<Result<Person>>;
 
     search(
-        filters: PaginationFilters,
+        filters: PersonPaginationFilters,
         options: PaginationOptions
     ): Promise<Result<PaginationResult<Person>>>;
 

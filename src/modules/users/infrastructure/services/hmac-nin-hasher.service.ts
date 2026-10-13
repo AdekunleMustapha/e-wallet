@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { NINHasher } from "../domain/services/nin-hasher.port";
+import { NINHasher } from "../../domain/services/nin-hasher.port";
 import { ConfigService } from "@nestjs/config";
 import { Result } from "src/shared/domain/result";
-import { NIN, NINHash } from "../domain/value-objects";
+import { NIN, NINHash } from "../../domain/value-objects";
 import crypto from 'crypto';
 
 /**

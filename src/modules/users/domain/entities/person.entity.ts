@@ -13,7 +13,6 @@ type PersonProps = {
     addressId?: UniqueId,
     ninHash?: NINHash,
     bvnHash?: BVNHash,
-    documentId?: UniqueId,
     createdAt?: Date,
     updatedAt?: Date
 }
@@ -36,5 +35,20 @@ export class Person extends BaseEntity {
     private _addressId: UniqueId | undefined;
     private _ninHash: NINHash | undefined;
     private _bvnHash: BVNHash | undefined;
-    private _documentId: UniqueId | undefined;
+
+    private constructor(props: PersonProps) {
+        super({
+            id: props.id,
+            createdAt: props.createdAt,
+            updatedAt: props.updatedAt
+        });
+        this._firstName = props.firstName;
+        this._lastName = props.lastName;
+        this._dob = props.dob;
+        this._email = props.email;
+        this._genderId = props.genderId;
+        this._addressId = props.addressId;
+        this._ninHash = props.ninHash;
+        this._bvnHash = props.bvnHash;
+    }
 }
