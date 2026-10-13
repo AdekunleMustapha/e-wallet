@@ -27,7 +27,7 @@ type PersonProps = {
  * Each data they give, both mandatory and non-mandatory data they give
  * which equals the eligibility they have opening different forms of accounts
  */
-export class User extends BaseEntity {
+export class Person extends BaseEntity {
     private _firstName: Name;
     private _lastName: Name;
     private _dob: DOB;
