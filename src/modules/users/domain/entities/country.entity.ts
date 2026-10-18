@@ -6,7 +6,7 @@ import { UniqueId } from "src/shared/domain/unique-id";
 type CountryProps = {
     id?: UniqueId;
     countryName: string;
-    countryCode: number;
+    countryCode: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -16,7 +16,7 @@ type CountryProps = {
  */
 export class Country extends BaseEntity {
     private _countryName: string;
-    private _countryCode: number;
+    private _countryCode: string;
 
     private constructor(props: CountryProps) {
         super({
@@ -36,7 +36,7 @@ export class Country extends BaseEntity {
             return Result.fail(new ValidationError("Country name must not be 0 or greater than 255 characters"));
         }
 
-        if(!/^\d{3}$/.test(countryCode.toString())) {
+        if(!/^\d{3}$/.test(countryCode)) {
             return Result.fail(new ValidationError("Country code must equal 3 digits"));
         }
 
@@ -51,7 +51,7 @@ export class Country extends BaseEntity {
         return this._countryName;
     }
 
-    get countryCode(): number {
+    get countryCode(): string {
         return this._countryCode;
     }
 }
