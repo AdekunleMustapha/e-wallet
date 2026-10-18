@@ -51,4 +51,36 @@ export class Person extends BaseEntity {
         this._ninHash = props.ninHash;
         this._bvnHash = props.bvnHash;
     }
+
+    /**
+     * Business creation: a brand-new person. Id and timestamps are generated.
+     * The value objects are already validated, so there is nothing left to fail.
+     */
+    public static create(props: Omit<PersonProps, 'id' | 'createdAt' | 'updatedAt'>): Person {
+        return new Person(props);
+    }
+
+    /**
+     * Rebuild from stored data (used by the persistence mapper only).
+     * Keeps the stored id and timestamps.
+     */
+    public static reconstitute(props: PersonProps): Person {
+        return new Person(props);
+    }
+
+    get firstName(): Name { return this._firstName; }
+
+    get lastName(): Name { return this._lastName; }
+
+    get dob(): DOB { return this._dob; }
+
+    get email(): Email { return this._email; }
+
+    get genderId(): UniqueId { return this._genderId; }
+
+    get addressId(): UniqueId | undefined { return this._addressId; }
+
+    get ninHash(): NINHash | undefined { return this._ninHash; }
+    
+    get bvnHash(): BVNHash | undefined { return this._bvnHash; }
 }

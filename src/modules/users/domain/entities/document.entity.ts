@@ -1,3 +1,4 @@
+import { ValidationError } from "src/shared/domain/errors";
 import { BaseEntity } from "src/shared/domain/base-entity";
 import { Result } from "src/shared/domain/result";
 import { UniqueId } from "src/shared/domain/unique-id";
@@ -35,5 +36,48 @@ export class Document extends BaseEntity {
         this._documentName = props.documentName;
         this._documentLink = props.documentLink;
         this._verified = props.verified;
+    }
+
+    public static create (props: DocumentProps): Result<Document> {
+        const documentName = props.documentName.trim();
+        if(documentName.length === 0 || documentName.length > 255) {
+            return Result.fail(new ValidationError("Document name should be between 1 to 255 characters"));
+        }
+
+        return Result.ok(new Document({
+            documentLink: props.documentLink.trim(),
+            documentName: documentName,
+            documentType: props.documentType,
+            personId: props.personId,
+            verified: false // documents are not verified by default
+        }));
+    }
+
+    public static reconstitute(props: DocumentProps): Document {
+        return new Document(props);
+    }
+
+    public markAsVerified(): void {
+        this._verified = true;
+    }
+
+    get documentLink(): string {
+        return this._documentLink;
+    }
+
+    get documentName(): string {
+        return this._documentName;
+    }
+
+    get documentType(): UniqueId {
+        return this._documentType;
+    }
+
+    get personId(): UniqueId {
+        return this._personId;
+    }
+
+    get verified(): Boolean {
+        return this._verified;
     }
 }

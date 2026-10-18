@@ -7,6 +7,8 @@ export interface CountryPaginationFilters {
     countryCode?: number;
 }
 
+export const COUNTRY_REPOSITORY = Symbol("COUNTRY_REPOSITORY");
+
 export interface ICountryRepository {
     
     save(country: Country): Promise<Result<Country>>;

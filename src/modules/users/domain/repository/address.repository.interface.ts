@@ -13,6 +13,8 @@ export interface AddressPaginationFilters {
     flatCode?: string;
 }
 
+export const ADDRESS_REPOSITORY = Symbol("ADDRESS_REPOSITORY");
+
 export interface IAddressRepository {
     
     save(address: Address): Promise<Result<Address>>;

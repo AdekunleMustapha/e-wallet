@@ -25,6 +25,8 @@ export interface PaginationResult<T> {
     totalPages: number
 }
 
+export const PERSON_REPOSITORY = Symbol("PERSON_REPOSITORY");
+
 export interface IPersonRepository {
 
     save(person: Person): Promise<Result<Person>>;

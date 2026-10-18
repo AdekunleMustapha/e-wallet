@@ -10,6 +10,8 @@ export interface DocumentPaginationFilters {
     verifies?: boolean
 }
 
+export const DOCUMENT_REPOSITORY = Symbol("DOCUMENT_REPOSITORY");
+
 export interface IDocumentRepository {
 
     save(doc: Document): Promise<Result<Document>>;

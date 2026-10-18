@@ -21,11 +21,11 @@ export class BVN {
         return this._value;
     }
 
-    get toString(): string {
+    public toString(): string {
         return "***********";
     }
 
-    get toJSON(): string {
+    public toJSON(): string {
         return "***********";
     }
 }

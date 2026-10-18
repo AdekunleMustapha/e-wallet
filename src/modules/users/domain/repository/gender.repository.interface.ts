@@ -2,6 +2,8 @@ import { Result } from "src/shared/domain/result";
 import { Gender } from "../entities";
 import { UniqueId } from "src/shared/domain/unique-id";
 
+export const GENDER_REPOSITORY = Symbol('GENDER_REPOSITORY');
+
 export interface IGenderRepository {
 
     save(gender: Gender): Promise<Result<Gender>>;
