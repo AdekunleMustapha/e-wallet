@@ -77,7 +77,7 @@ export class Document extends BaseEntity {
         return this._personId;
     }
 
-    get verified(): Boolean {
+    get verified(): boolean {
         return this._verified;
     }
 }

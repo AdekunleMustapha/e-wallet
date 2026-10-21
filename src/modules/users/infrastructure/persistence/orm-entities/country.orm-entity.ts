@@ -13,7 +13,7 @@ export class CountryOrmEntity {
     countryName!: string;
 
     @Column({name: "country_code", type: "char",  length: 3})
-    countryCode!: number;
+    countryCode!: string;
 
     @Column({name: "created_at", type: "datetime", precision: 3})
     createdAt!: Date;
