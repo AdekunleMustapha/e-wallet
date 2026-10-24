@@ -11,7 +11,7 @@ export class DocumentMapper {
         return Document.reconstitute({
             documentLink: row.documentLink,
             documentName: row.documentName,
-            documentType: UniqueId.createFromString(row.documentType),
+            documentTypeId: UniqueId.createFromString(row.documentTypeId),
             personId: UniqueId.createFromString(row.personId),
             verified: row.verified,
             createdAt: row.createdAt,
@@ -25,7 +25,7 @@ export class DocumentMapper {
         row.createdAt = document.createdAt;
         row.documentLink = document.documentLink;
         row.documentName = document.documentName;
-        row.documentType = document.documentType.value;
+        row.documentTypeId = document.documentTypeId.value;
         row.id = document.id.value;
         row.personId = document.personId.value;
         row.updatedAt = document.updatedAt;

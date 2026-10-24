@@ -10,7 +10,7 @@ export class AddressMapper {
     public static toDomain(row: AddressOrmEntity): Address {
         return Address.reconstitute({
             city: row.city,
-            country: UniqueId.createFromString(row.country),
+            countryId: UniqueId.createFromString(row.countryId),
             state: row.state,
             streetName: row.streetName,
             buildingCode: row.buildingCode?? undefined,
@@ -26,7 +26,7 @@ export class AddressMapper {
         const row = new AddressOrmEntity();
         row.buildingCode = address.buildingCode?? null;
         row.city = address.city;
-        row.country = address.country.value;
+        row.countryId = address.countryId.value;
         row.createdAt = address.createdAt;
         row.flatCode = address.flatCode?? null;
         row.id = address.id.value;
