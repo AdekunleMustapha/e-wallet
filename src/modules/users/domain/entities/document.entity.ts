@@ -6,7 +6,7 @@ import { UniqueId } from "src/shared/domain/unique-id";
 type DocumentProps = {
     id?: UniqueId;
     personId: UniqueId;
-    documentType: UniqueId;
+    documentTypeId: UniqueId;
     documentName: string;
     documentLink: string;
     verified: boolean;
@@ -20,7 +20,7 @@ type DocumentProps = {
  */
 export class Document extends BaseEntity {
     private _personId: UniqueId;
-    private _documentType: UniqueId;
+    private _documentTypeId: UniqueId;
     private _documentName: string;
     private _documentLink: string;
     private _verified: boolean;
@@ -32,7 +32,7 @@ export class Document extends BaseEntity {
             updatedAt: props.updatedAt
         });
         this._personId = props.personId;
-        this._documentType = props.documentType;
+        this._documentTypeId = props.documentTypeId;
         this._documentName = props.documentName;
         this._documentLink = props.documentLink;
         this._verified = props.verified;
@@ -47,7 +47,7 @@ export class Document extends BaseEntity {
         return Result.ok(new Document({
             documentLink: props.documentLink.trim(),
             documentName: documentName,
-            documentType: props.documentType,
+            documentTypeId: props.documentTypeId,
             personId: props.personId,
             verified: false // documents are not verified by default
         }));
@@ -69,8 +69,8 @@ export class Document extends BaseEntity {
         return this._documentName;
     }
 
-    get documentType(): UniqueId {
-        return this._documentType;
+    get documentTypeId(): UniqueId {
+        return this._documentTypeId;
     }
 
     get personId(): UniqueId {

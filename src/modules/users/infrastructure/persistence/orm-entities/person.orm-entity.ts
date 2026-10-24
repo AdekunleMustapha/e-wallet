@@ -19,20 +19,19 @@ export class PersonOrmEntity {
     dob!: string;
 
     @Index('idx_persons_email', {unique: true})
-    @Column({type: "char"})
+    @Column({type: "varchar", length: 255})
     email!: string;
 
+    @Index('idx_persons_gender_id', {unique: false})
     @Column({name: "gender_id", type: "char", length: 36})
     genderId!: string;
 
     @Column({name: "address_id", type: "char", length: 36, nullable: true})
     addressId!: string | null;
 
-    @Index('idx_persons_nin_hash', {unique: true})
     @Column({name: "nin_hash", type: "char", length: 64, nullable: true})
     ninHash!: string | null;
 
-    @Index('idx_persons_bvn_hash', {unique: true})
     @Column({name: "bvn_hash", type: "char", length: 64, nullable: true})
     bvnHash!: string | null;
 

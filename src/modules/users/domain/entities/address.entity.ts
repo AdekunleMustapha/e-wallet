@@ -5,7 +5,7 @@ import { ValidationError } from "src/shared/domain/errors";
 
 type AddressProps = {
     id?: UniqueId;
-    country: UniqueId;
+    countryId: UniqueId;
     state: string;
     city: string;
     streetName: string;
@@ -21,7 +21,7 @@ type AddressProps = {
  * Can be re-used if the address matches another users address
  */
 export class Address extends BaseEntity {
-    private _country: UniqueId;
+    private _countryId: UniqueId;
     private _state: string;
     private _city: string;
     private _streetName: string;
@@ -35,7 +35,7 @@ export class Address extends BaseEntity {
             createdAt: props.createdAt,
             updatedAt: props.updatedAt
         });
-        this._country = props.country;
+        this._countryId = props.countryId;
         this._state = props.state;
         this._city = props.city;
         this._streetName = props.streetName;
@@ -81,7 +81,7 @@ export class Address extends BaseEntity {
 
         return Result.ok(new Address({
             city,
-            country: props.country,
+            countryId: props.countryId,
             state,
             streetName,
             buildingCode: props.buildingCode?.trim(),
@@ -98,8 +98,8 @@ export class Address extends BaseEntity {
         return this._city;
     }
 
-    get country(): UniqueId {
-        return this._country;
+    get countryId(): UniqueId {
+        return this._countryId;
     }
 
     get state(): string {

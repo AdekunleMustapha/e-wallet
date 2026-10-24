@@ -9,9 +9,9 @@ export class AddressOrmEntity {
     @PrimaryColumn({type: "char", length: 36})
     id!: string;
 
-    @Index('idx_addresses_country', {unique: false})
-    @Column({type: "char", length: 36})
-    country!: string;
+    @Index('idx_addresses_country_id', {unique: false})
+    @Column({name: "country_id", type: "char", length: 36})
+    countryId!: string;
 
     @Column({type: "varchar", length: 100})
     state!: string;
@@ -19,7 +19,7 @@ export class AddressOrmEntity {
     @Column({type: "varchar", length: 100})
     city!: string;
 
-    @Column({type: "varchar", length: 100})
+    @Column({name: "street_name", type: "varchar", length: 100})
     streetName!: string;
 
     @Column({name: "postal_code", type: "varchar", length: 9, nullable: true})

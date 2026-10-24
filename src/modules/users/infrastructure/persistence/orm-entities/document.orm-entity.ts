@@ -13,14 +13,14 @@ export class DocumentOrmEntity {
     @Column({name: "person_id", type: "char", length: 36})
     personId!: string;
 
-    @Index("idx_document_type", {unique: false})
-    @Column({name: "document_type", type: "char", length: 36})
-    documentType!: string;
+    @Index("idx_documents_document_type_id", {unique: false})
+    @Column({name: "document_type_id", type: "char", length: 36})
+    documentTypeId!: string;
 
     @Column({name: "document_name", type: "varchar", length: 255})
     documentName!: string;
 
-    @Column({name: "document_link", type: "char"})
+    @Column({name: "document_link", type: "varchar", length: 255})
     documentLink!: string;
 
     @Column({type: "boolean", default: false})
