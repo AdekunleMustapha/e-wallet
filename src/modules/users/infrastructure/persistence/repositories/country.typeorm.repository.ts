@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CountryPaginationFilters, ICountryRepository } from "src/modules/users/domain/repository";
+import { CountryPaginationFilters, ICountryRepository, PaginationOptions, PaginationResult } from "src/modules/users/domain/repository";
 import { CountryOrmEntity } from "../orm-entities";
 import { Repository } from "typeorm";
 import { Country } from "src/modules/users/domain/entities";
@@ -9,6 +9,14 @@ import { UniqueId } from "src/shared/domain/unique-id";
 import { translateDBErrors } from "src/infrastructure/database/translate-db-error";
 import { CountryMapper } from "src/modules/users/application/mappers";
 import { NotFoundError } from "src/shared/domain/errors";
+
+const SORTABLE_COLUMNS: Record<string, string> = {
+    createdAt: "c.createdAt",
+    countryCode: "c.countryCode",
+    countryName: "c.countryName"
+}
+
+const MAX_PAGE_SIZE = 100;
 
 @Injectable()
 export class CountryTypeOrmRepository implements ICountryRepository {
@@ -64,9 +72,38 @@ export class CountryTypeOrmRepository implements ICountryRepository {
         }
     }
 
-    public async search(filters: CountryPaginationFilters): Promise<Result<Country[]>> {
+    public async search(
+        filters: CountryPaginationFilters,
+        options: PaginationOptions
+    ): Promise<Result<PaginationResult<Country>>> {
         try {
+            const page = Math.max(1, options.page);
+            const limit = Math.min(MAX_PAGE_SIZE, Math.max(1, options.limit));
 
+            const queryBuilder = this.orm.createQueryBuilder("c");
+
+            if(filters.countryCode) {
+                queryBuilder.andWhere("c.countryCode = :countryCode", {countryCode: filters.countryCode});
+            }
+
+            if(filters.countryName) {
+                queryBuilder.andWhere("c.countryName = :countryName", {countryName: filters.countryName});
+            }
+
+            const sortColumn = SORTABLE_COLUMNS[options.sortBy ?? ''] ?? SORTABLE_COLUMNS.createdAt;
+            queryBuilder.orderBy(sortColumn, options.sortOrder === "ASC"? "ASC" : "DESC")
+                .skip((page - 1) * limit)
+                .take(limit)
+
+            const [rows, total] = await queryBuilder.getManyAndCount();
+
+            return Result.ok({
+                data: rows.map(CountryMapper.toDomain),
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            })
         } catch (error) {
             return Result.fail(translateDBErrors(error, "search country"));
         }

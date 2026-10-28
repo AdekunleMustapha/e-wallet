@@ -1,6 +1,7 @@
 import { UniqueId } from "src/shared/domain/unique-id";
 import { Country } from "../entities";
 import { Result } from "src/shared/domain/result";
+import { PaginationOptions, PaginationResult } from "./person.repository.interface";
 
 export interface CountryPaginationFilters {
     countryName?: string;
@@ -15,7 +16,10 @@ export interface ICountryRepository {
 
     update(country: Country): Promise<Result<Country>>;
 
-    search(filters: CountryPaginationFilters): Promise<Result<Country[]>>;
+    search(
+        filters: CountryPaginationFilters,
+        options: PaginationOptions
+    ): Promise<Result<PaginationResult<Country>>>;
 
     getById(id: UniqueId): Promise<Result<Country>>;
 
