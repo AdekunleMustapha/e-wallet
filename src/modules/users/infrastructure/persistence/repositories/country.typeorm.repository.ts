@@ -93,7 +93,7 @@ export class CountryTypeOrmRepository implements ICountryRepository {
             const sortColumn = SORTABLE_COLUMNS[options.sortBy ?? ''] ?? SORTABLE_COLUMNS.createdAt;
             queryBuilder.orderBy(sortColumn, options.sortOrder === "ASC"? "ASC" : "DESC")
                 .skip((page - 1) * limit)
-                .take(limit)
+                .take(limit);
 
             const [rows, total] = await queryBuilder.getManyAndCount();
 
