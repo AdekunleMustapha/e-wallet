@@ -30,7 +30,7 @@ const SORTABLE_COLUMNS: Record<string, string> = {
 const MAX_PAGE_SIZE = 100;
 
 @Injectable()
-export class PersonTypeOrmEntity implements IPersonRepository {
+export class PersonTypeOrmRepository implements IPersonRepository {
 
     constructor(
         @InjectRepository(PersonOrmEntity)

@@ -10,6 +10,7 @@ import appConfig from './shared/config/app.config';
 import { envValidationSchema } from './shared/config/env.validation';
 import loggerConfig from './shared/logger/logger.config';
 import { LoggerModule } from './shared/logger/logger.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { LoggerModule } from './shared/logger/logger.module';
     DatabaseModule,
     RedisModule,
     HealthModule,
+    UsersModule,
     WalletModule,
   ],
 })
