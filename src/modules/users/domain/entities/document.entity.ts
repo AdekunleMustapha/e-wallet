@@ -59,25 +59,25 @@ export class Document extends BaseEntity {
 
     public markAsVerified(): void {
         this._verified = true;
+        this.updateTimestamp();
     }
 
-    get documentLink(): string {
-        return this._documentLink;
+    public changeDocumentName(name: string): Result<void> {
+        if(name.trim().length === 0 || name.trim().length > 255) {
+            return Result.fail(new ValidationError("Name must be between 1 to 255 characters"));
+        }
+        this._documentName = name.trim();
+        this.updateTimestamp();
+        return Result.ok();
     }
 
-    get documentName(): string {
-        return this._documentName;
-    }
+    get documentLink(): string {return this._documentLink;}
 
-    get documentTypeId(): UniqueId {
-        return this._documentTypeId;
-    }
+    get documentName(): string {return this._documentName;}
 
-    get personId(): UniqueId {
-        return this._personId;
-    }
+    get documentTypeId(): UniqueId {return this._documentTypeId;}
 
-    get verified(): boolean {
-        return this._verified;
-    }
+    get personId(): UniqueId {return this._personId;}
+
+    get verified(): boolean {return this._verified;}
 }

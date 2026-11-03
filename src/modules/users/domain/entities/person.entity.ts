@@ -2,6 +2,8 @@ import { UniqueId } from "src/shared/domain/unique-id";
 import { BVNHash, Email, NINHash, Name } from "../value-objects";
 import { DOB } from "../value-objects/dob.vo";
 import { BaseEntity } from "src/shared/domain/base-entity";
+import { Result } from "src/shared/domain/result";
+import { ConflictError } from "src/shared/domain/errors";
 
 type PersonProps = {
     id?: UniqueId,
@@ -66,6 +68,35 @@ export class Person extends BaseEntity {
      */
     public static reconstitute(props: PersonProps): Person {
         return new Person(props);
+    }
+
+    public linkNin(ninHash: NINHash): Result<void> {
+        const existingNin = this._ninHash;
+        if(existingNin) {
+            return Result.fail(new ConflictError("NIN already linked for this user"));
+        }
+        this._ninHash = ninHash;
+        this.updateTimestamp();
+        return Result.ok();
+    }
+
+    public linkBvn(bvnHash: BVNHash): Result<void> {
+        const existingBvn = this._bvnHash;
+        if(existingBvn) {
+            return Result.fail(new ConflictError("BVN already linked for this user"));
+        }
+        this._bvnHash = bvnHash;
+        this.updateTimestamp();
+        return Result.ok();
+    }
+
+    public updateDetails(props: {
+        email?: Email,
+        addressId?: UniqueId;
+    }): void {
+        if(props.email) this._email = props.email;
+        if(props.addressId) this._addressId = props.addressId;
+        this.updateTimestamp();
     }
 
     get firstName(): Name { return this._firstName; }

@@ -94,31 +94,17 @@ export class Address extends BaseEntity {
         return new Address(props);
     }
 
-    get city(): string {
-        return this._city;
-    }
+    get city(): string {return this._city;}
 
-    get countryId(): UniqueId {
-        return this._countryId;
-    }
+    get countryId(): UniqueId {return this._countryId;}
 
-    get state(): string {
-        return this._state;
-    }
+    get state(): string {return this._state;}
 
-    get streetName(): string {
-        return this._streetName;
-    }
+    get streetName(): string {return this._streetName;}
 
-    get buildingCode(): string | undefined {
-        return this._buildingCode;
-    }
+    get buildingCode(): string | undefined {return this._buildingCode;}
 
-    get flatCode(): string | undefined {
-        return this._flatCode;
-    }
+    get flatCode(): string | undefined {return this._flatCode;}
 
-    get postalCode(): string | undefined {
-        return this._postalCode;
-    }
+    get postalCode(): string | undefined {return this._postalCode;}
 }
