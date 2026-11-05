@@ -82,7 +82,7 @@ export class DocumentTypeOrmRepository implements IDocumentRepository {
             const limit = Math.min(MAX_PAGE_SIZE, Math.max(1, options.limit));
             const page = Math.max(1, options.page);
 
-            const queryBuilder = this.orm.createQueryBuilder();
+            const queryBuilder = this.orm.createQueryBuilder("d");
 
             if(filters.documentName) {
                 queryBuilder.andWhere("d.documentName = :documentName", {documentName: filters.documentName});
@@ -92,13 +92,11 @@ export class DocumentTypeOrmRepository implements IDocumentRepository {
                 queryBuilder.andWhere("d.documentType = :documentType", {documentType: filters.documentType});
             }
 
-            if(filters.personId) {
-                queryBuilder.andWhere("d.personId = :personId", {personId: filters.personId});
+            if(filters.verified) {
+                queryBuilder.andWhere("d.verified = :verified", {verified: filters.verified});
             }
 
-            if(filters.verifies) {
-                queryBuilder.andWhere("d.verifies = :verifies", {verifies: filters.verifies});
-            }
+            queryBuilder.andWhere("d.personId = :personId", {personId: filters.personId});
 
             const sortColumn = SORTABLE_COLUMNS[options.sortBy ?? ''] ?? SORTABLE_COLUMNS.createdAt;
             queryBuilder.orderBy(sortColumn, options.sortOrder === "ASC"? "ASC" : "DESC")

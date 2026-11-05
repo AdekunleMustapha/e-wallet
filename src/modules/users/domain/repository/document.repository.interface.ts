@@ -4,10 +4,10 @@ import { UniqueId } from "src/shared/domain/unique-id";
 import { PaginationOptions, PaginationResult } from "./person.repository.interface";
 
 export interface DocumentPaginationFilters {
-    personId?: UniqueId,
+    personId: UniqueId,
     documentType?: UniqueId,
     documentName?: string,
-    verifies?: boolean
+    verified?: boolean
 }
 
 export const DOCUMENT_REPOSITORY = Symbol("DOCUMENT_REPOSITORY");
