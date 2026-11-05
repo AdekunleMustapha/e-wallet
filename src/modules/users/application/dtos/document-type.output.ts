@@ -5,7 +5,7 @@ export type DocumentTypeOutput = {
     name: string
 }
 
-export function toDocumentType(documentType: DocumentType): DocumentTypeOutput {
+export function toDocumentTypeOutput(documentType: DocumentType): DocumentTypeOutput {
     return {
         id: documentType.id.value,
         name: documentType.documentTypeName
