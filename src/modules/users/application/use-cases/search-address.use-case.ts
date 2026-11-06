@@ -29,10 +29,11 @@ export class SearchAddressByUseCase implements UseCase<SearchAddressCommand, Sea
         const addressOutputs: AddressOutput[] = [];
         for(let i=0; i < paginatedResult.data.length; i++) {
             const countryResult = await this.countryRepository.getById(paginatedResult.data[i].countryId);
+            if(countryResult.isFailure) return Result.fail(countryResult.error);
             addressOutputs.push(toAddressOutput(
                 paginatedResult.data[i],
                 toCountryOutput(countryResult.value)
-            ))
+            ));
         }
 
         return Result.ok({
@@ -44,3 +45,5 @@ export class SearchAddressByUseCase implements UseCase<SearchAddressCommand, Sea
         });
     }
 }
+
+export { SearchAddressByUseCase as SearchAddressUseCase };

@@ -1,20 +1,25 @@
 import { Injectable, Logger, Inject } from "@nestjs/common";
 import { UseCase } from "src/shared/application/use-case";
-import { PersonOutput } from "../dtos";
-import { ADDRESS_REPOSITORY, IAddressRepository, IPersonRepository, PERSON_REPOSITORY } from "../../domain/repository";
+import { AddressOutput, PersonOutput, toAddressOutput, toCountryOutput, toGenderOutput, toPersonOutput } from "../dtos";
+import { ADDRESS_REPOSITORY, COUNTRY_REPOSITORY, GENDER_REPOSITORY, IAddressRepository, ICountryRepository, IGenderRepository, IPersonRepository, PERSON_REPOSITORY } from "../../domain/repository";
 import { Result } from "src/shared/domain/result";
 import { UniqueId } from "src/shared/domain/unique-id";
 import { BVN, BVNHash, Email, NIN, NINHash } from "../../domain/value-objects";
-import { Address } from "../../domain/entities";
+import { Address, Country } from "../../domain/entities";
+import { BVN_HASHER, IBvnHasher, INinHasher, NIN_HASHER } from "../../domain/services";
 
 export type EditPersonCommand = {
     id: string,
-    email: string,
+    email?: string,
     addressId?: string,
     nin?: string,
     bvn?: string
 }
 
+/**
+ * Simple person info edit that allows change in email, address and adding of nin and bvn
+ * Currently allows adding of nin and bvn without verifying it with dob or full name
+ */
 @Injectable()
 export class EditPersonUseCase implements UseCase<EditPersonCommand, PersonOutput> {
     private readonly logger = new Logger(EditPersonUseCase.name);
@@ -22,8 +27,11 @@ export class EditPersonUseCase implements UseCase<EditPersonCommand, PersonOutpu
     constructor(
         @Inject(PERSON_REPOSITORY) private readonly personRepository: IPersonRepository,
         @Inject(ADDRESS_REPOSITORY) private readonly addressRepository: IAddressRepository,
-        @Inject
-    ){}
+        @Inject(COUNTRY_REPOSITORY) private readonly countryRepository: ICountryRepository,
+        @Inject(GENDER_REPOSITORY) private readonly genderRepository: IGenderRepository,
+        @Inject(NIN_HASHER) private readonly ninHasher: INinHasher,
+        @Inject(BVN_HASHER) private readonly bvnHasher: IBvnHasher
+    ) {}
 
     public async execute(dto: EditPersonCommand): Promise<Result<PersonOutput>> {
         this.logger.log("Execute edit person use case");
@@ -43,14 +51,17 @@ export class EditPersonUseCase implements UseCase<EditPersonCommand, PersonOutpu
             email = emailResult.value;
         }
 
-        let addressId: UniqueId | undefined;
+        let country: Country | undefined;
         let address: Address | undefined;
         if(dto.addressId) {
             const id = UniqueId.createFromString(dto.addressId);
             const addressResult = await this.addressRepository.getById(id);
             if(addressResult.isFailure) return Result.fail(addressResult.error);
             address = addressResult.value;
-            addressId = address.id;
+            
+            const countryResult = await this.countryRepository.getById(address.countryId);
+            if(countryResult.isFailure) return Result.fail(countryResult.error);
+            country = countryResult.value;
         }
 
         let ninHash: NINHash | undefined; 
@@ -70,5 +81,37 @@ export class EditPersonUseCase implements UseCase<EditPersonCommand, PersonOutpu
             if(bvnHashResult.isFailure) return Result.fail(bvnHashResult.error);
             bvnHash = bvnHashResult.value;
         }
+
+        const genderResult = await this.genderRepository.getById(person.genderId);
+        if(genderResult.isFailure) return Result.fail(genderResult.error);
+        const gender = genderResult.value;
+
+        // update person entity
+        person.updateDetails({
+            addressId: address? address.id : undefined,
+            email
+        });
+        if(bvnHash) {
+            const result = person.linkBvn(bvnHash);
+            if(result.isFailure) return Result.fail(result.error);
+        }
+        if(ninHash) {
+            const result = person.linkNin(ninHash);
+            if(result.isFailure) return Result.fail(result.error);
+        }
+
+        // update person record;
+        const updateResult = await this.personRepository.update(person);
+        if(updateResult.isFailure) return Result.fail(updateResult.error);
+        
+        // return out put
+        const genderOutput = toGenderOutput(gender);
+        let addressOutput: AddressOutput | undefined;
+        if(address && country) {
+            addressOutput = toAddressOutput(address, toCountryOutput(country));
+        }
+        const personOutput = toPersonOutput(person, genderOutput, addressOutput);
+
+        return Result.ok(personOutput);
     }
 };

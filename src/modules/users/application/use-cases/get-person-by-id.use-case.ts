@@ -1,13 +1,12 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { UseCase } from "src/shared/application/use-case";
-import { PersonOutput, toPersonOutput, toAddressOutput, toCountryOutput, toGenderOutput } from "../dtos";
+import { AddressOutput, PersonOutput, toPersonOutput, toAddressOutput, toCountryOutput, toGenderOutput } from "../dtos";
 import { PERSON_REPOSITORY, IPersonRepository } from "../../domain/repository";
 import { GENDER_REPOSITORY, IGenderRepository } from "../../domain/repository";
 import { ADDRESS_REPOSITORY, IAddressRepository } from "../../domain/repository";
 import { COUNTRY_REPOSITORY, ICountryRepository } from "../../domain/repository";
 import { Result } from "src/shared/domain/result";
 import { UniqueId } from "src/shared/domain/unique-id";
-import { NotFoundError } from "src/shared/domain/errors";
 
 export type GetPersonByIdCommand = { id: string };
 
@@ -35,18 +34,17 @@ export class GetPersonByIdUseCase implements UseCase<GetPersonByIdCommand, Perso
         if(genderResult.isFailure) return Result.fail(genderResult.error);
         const genderOutput = toGenderOutput(genderResult.value);
 
-        if(!person.addressId) {
-            return Result.fail(new NotFoundError("Person has no linked address"));
+        let addressOutput: AddressOutput | undefined;
+        if(person.addressId) {
+            const addressResult = await this.addressRepository.getById(person.addressId);
+            if(addressResult.isFailure) return Result.fail(addressResult.error);
+
+            const countryResult = await this.countryRepository.getById(addressResult.value.countryId);
+            if(countryResult.isFailure) return Result.fail(countryResult.error);
+
+            addressOutput = toAddressOutput(addressResult.value, toCountryOutput(countryResult.value));
         }
 
-        const addressResult = await this.addressRepository.getById(person.addressId);
-        if(addressResult.isFailure) return Result.fail(addressResult.error);
-
-        const countryResult = await this.countryRepository.getById(addressResult.value.countryId);
-        if(countryResult.isFailure) return Result.fail(countryResult.error);
-
-        const addressOutput = toAddressOutput(addressResult.value, toCountryOutput(countryResult.value));
-
-        return Result.ok(toPersonOutput(person, addressOutput, genderOutput));
+        return Result.ok(toPersonOutput(person, genderOutput, addressOutput));
     }
 }

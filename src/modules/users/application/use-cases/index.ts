@@ -1,25 +1,39 @@
+// Gender
 export * from './create-gender.use-case';
 export * from './get-all-gender.use-case';
 export * from './get-gender-by-id.use-case';
 export * from './edit-gender.use-case';
 export * from './delete-gender.use-case';
+
+// Document Type
 export * from './create-document-type.use-case';
 export * from './edit-document-type.use-case';
 export * from './get-all-document-type.use-case';
 export * from './get-document-type-by-id.use-case';
 export * from './delete-document-type.use-case';
+
+// Country
 export * from './create-country.use-case';
 export * from './edit-country.use-case';
 export * from './get-country-by-id.use-case';
 export * from './delete-country.use-case';
 export * from './search-country.use-case';
-export * from './delete-document.use-case';
-export * from './get-document-by-id.use-case';
-export * from './search-document.use-case';
+
+// Address
+export * from './create-address.use-case';
 export * from './edit-address.use-case';
-export * from './get-person-by-id.use-case';
-export * from './search-person.use-case';
-export * from './create-person.use-case';
-export * from './edit-person.use-case';
+export * from './find-address-by-id.use-case';
+export * from './search-address.use-case';
+
+// Document
 export * from './create-document.use-case';
 export * from './edit-document.use-case';
+export * from './get-document-by-id.use-case';
+export * from './delete-document.use-case';
+export * from './search-document.use-case';
+
+// Person
+export * from './create-person.use-case';
+export * from './edit-person.use-case';
+export * from './get-person-by-id.use-case';
+export * from './search-person.use-case';

@@ -22,6 +22,11 @@ export type CreatePersonCommand = {
     nin?: string,
     bvn?: string
 }
+
+/**
+ * Simple person record creation
+ * Currently allows adding of nin and bvn without verifying it with dob or full name
+ */
 @Injectable()
 export class CreatePersonUseCase implements UseCase<CreatePersonCommand , PersonOutput> {
     private readonly logger = new Logger(CreatePersonUseCase.name);
@@ -68,7 +73,8 @@ export class CreatePersonUseCase implements UseCase<CreatePersonCommand , Person
             if(addressResult.isFailure) return Result.fail(addressResult.error);
             address = addressResult.value;
 
-            const countryResult = await this.countryRepository.getById(addressId);
+            const countryResult = await this.countryRepository.getById(address.countryId);
+            if(countryResult.isFailure) return Result.fail(countryResult.error);
             country = countryResult.value;
         }
 
