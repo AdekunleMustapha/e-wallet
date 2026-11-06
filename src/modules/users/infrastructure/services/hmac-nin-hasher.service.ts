@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { NINHasher } from "../../domain/services/nin-hasher.port";
+import { INinHasher } from "../../domain/services/nin-hasher.port";
 import { ConfigService } from "@nestjs/config";
 import { Result } from "src/shared/domain/result";
 import { NIN, NINHash } from "../../domain/value-objects";
@@ -9,7 +9,7 @@ import crypto from 'crypto';
  * NIN hasher using crypto hmac algorithm
  */
 @Injectable()
-export class HmacNINHasher implements NINHasher{
+export class HmacNINHasher implements INinHasher{
     private readonly _pepper: string;
 
     constructor(config: ConfigService){

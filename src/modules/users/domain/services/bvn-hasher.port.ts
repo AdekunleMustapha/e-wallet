@@ -6,6 +6,6 @@ export const BVN_HASHER = Symbol("BVN_HASHER");
 /**
  * BVN hasher interface
  */
-export interface bvnHasher {
+export interface IBvnHasher {
     hash(bvn: BVN): Result<BVNHash>;
 }

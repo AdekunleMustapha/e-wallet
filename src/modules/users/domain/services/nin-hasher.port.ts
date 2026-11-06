@@ -6,6 +6,6 @@ export const NIN_HASHER = Symbol("NIN_HASHER");
 /**
  * NIN Hasher interface
  */
-export interface NINHasher {
+export interface INinHasher {
     hash(nin: NIN): Result<NINHash>;
 }

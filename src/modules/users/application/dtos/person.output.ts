@@ -9,14 +9,14 @@ export type PersonOutput = {
     dob: string,
     email: string,
     gender: GenderOutput,
-    address: AddressOutput,
+    address?: AddressOutput,
     createdAt: Date
 }
 
 export function toPersonOutput(
     person: Person,
-    address: AddressOutput,
-    gender: GenderOutput
+    gender: GenderOutput,
+    address?: AddressOutput
 ): PersonOutput {
     return {
         id: person.id.value,

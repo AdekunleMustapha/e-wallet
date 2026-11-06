@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { bvnHasher } from "../../domain/services/bvn-hasher.port";
+import { IBvnHasher } from "../../domain/services/bvn-hasher.port";
 import { ConfigService } from "@nestjs/config";
 import { Result } from "src/shared/domain/result";
 import { BVN, BVNHash } from "../../domain/value-objects";
 import crypto from 'crypto';
 
 @Injectable()
-export class HmacBVNHasher implements bvnHasher {
+export class HmacBVNHasher implements IBvnHasher {
     private readonly _pepper: string;
 
     constructor(config: ConfigService) {
