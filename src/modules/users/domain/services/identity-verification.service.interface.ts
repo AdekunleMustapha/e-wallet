@@ -1,15 +1,12 @@
 import { Result } from "src/shared/domain/result";
 
-type verificationDetails = {
-    nin: string,
-    dob: string,
+export type VerificationResponse = {
     firstName: string,
-    lastName: string
-}
-
-type verificationResponse = {
-    firstName: string,
-    lastName: string 
+    middleName: string,
+    lastName: string,
+    age: number,
+    dob?: string,
+    address?: string
 }
 
 export const IDENTITY_VERIFICATION_SERVICE = Symbol("IDENTITY_VERIFICATION_SERVICE");
@@ -22,7 +19,7 @@ export interface IIdentificationService {
      * Result.fail(ValidationError) -> the provider answered and the details do NOT match
      * Result.fail(InternalError)   -> the provider was unreachable / timed out / errored
      */
-    verifyNIN(props: verificationDetails): Promise<Result<verificationResponse>>;
+    verifyNIN(nin: string): Promise<Result<VerificationResponse>>;
 
-    verifyBVN(props: verificationDetails): Promise<Result<verificationResponse>>;
+    verifyBVN(bvn: string): Promise<Result<VerificationResponse>>;
 }

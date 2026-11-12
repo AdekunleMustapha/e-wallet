@@ -6,5 +6,5 @@ export interface INotificationService {
 
     welcome(props: {to: string, firstName: string}): Promise<Result<void>>;
 
-    sendOTP(props: {to: string}): Promise<Result<void>>;
+    sendOTP(props: {to: string, token: string, ttl: number}): Promise<Result<void>>;
 }

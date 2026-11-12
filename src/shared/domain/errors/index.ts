@@ -6,4 +6,5 @@ export * from './forbidden-error';
 export * from './conflict-error';
 export * from './internal-error';
 export * from './unprocessable-entity-error';
-
+export * from './service-unavailable.error';
+export * from './bad-gateway.error';
