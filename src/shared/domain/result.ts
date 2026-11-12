@@ -4,6 +4,8 @@
  * Encapsulates success/failure states with type safety
  */
 
+import { AppError } from "./errors";
+
 export class Result<T> {
   private readonly _isSuccess: boolean;
   private readonly _error?: Error;
@@ -65,11 +67,11 @@ export class Result<T> {
     return this._value as T;
   }
 
-  public get error(): Error {
+  public get error(): AppError {
     if (this._isSuccess) {
       throw new Error('Cannot get error from a successful result. Use value instead.');
     }
-    return this._error as Error;
+    return this._error as AppError;
   }
 
   /**

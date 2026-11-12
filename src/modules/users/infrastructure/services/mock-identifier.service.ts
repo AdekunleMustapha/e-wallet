@@ -7,8 +7,8 @@ import { Result } from "src/shared/domain/result";
  * Not external call, just returns the input value. CAn be adjusted to mock failures
  */
 @Injectable()
-export class MockIdentifier implements IIdentificationService {
-    private readonly logger = new Logger(MockIdentifier.name);
+export class MockIdentifierService implements IIdentificationService {
+    private readonly logger = new Logger(MockIdentifierService.name);
 
     public async verifyBVN(bvn: string): Promise<Result<VerificationResponse>> {
         this.logger.log("Verify bvn mock service hit!");

@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { NIN_HASHER, BVN_HASHER } from "./domain/services";
-import { HmacNINHasher, HmacBVNHasher } from "./infrastructure/services";
+import { NIN_HASHER, BVN_HASHER, IDENTITY_VERIFICATION_SERVICE } from "./domain/services";
+import { HmacNINHasher, HmacBVNHasher, MockIdentifierService } from "./infrastructure/services";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AddressOrmEntity, CountryOrmEntity, DocumentOrmEntity, DocumentTypeOrmEntity, GenderOrmEntity, PersonOrmEntity } from "./infrastructure/persistence/orm-entities";
 import { ADDRESS_REPOSITORY, COUNTRY_REPOSITORY, DOCUMENT_REPOSITORY, DOCUMENT_TYPE_REPOSITORY, GENDER_REPOSITORY, PERSON_REPOSITORY } from "./domain/repository";
@@ -28,7 +28,8 @@ import { AddressTypeOrmRepository, CountryTypeOrmRepository, DocumentTypeOrmRepo
         {provide: COUNTRY_REPOSITORY, useClass: CountryTypeOrmRepository},
         {provide: ADDRESS_REPOSITORY, useClass: AddressTypeOrmRepository},
         {provide: DOCUMENT_REPOSITORY, useClass: DocumentTypeOrmRepository},
-        {provide: DOCUMENT_TYPE_REPOSITORY, useClass: DocumentTypeTypeOrmRepository}
+        {provide: DOCUMENT_TYPE_REPOSITORY, useClass: DocumentTypeTypeOrmRepository},
+        {provide: IDENTITY_VERIFICATION_SERVICE, useClass: MockIdentifierService}
     ],
     exports: [
         NIN_HASHER, 
@@ -38,7 +39,8 @@ import { AddressTypeOrmRepository, CountryTypeOrmRepository, DocumentTypeOrmRepo
         COUNTRY_REPOSITORY,
         ADDRESS_REPOSITORY,
         DOCUMENT_REPOSITORY,
-        DOCUMENT_TYPE_REPOSITORY
+        DOCUMENT_TYPE_REPOSITORY,
+        IDENTITY_VERIFICATION_SERVICE
     ],
 })
 export class UsersModule {}
