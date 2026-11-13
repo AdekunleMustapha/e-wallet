@@ -6,7 +6,6 @@ import { Result } from "src/shared/domain/result";
 import { BVN, BVNHash, DOB, Email, Name, NIN, NINHash } from "../../domain/value-objects";
 import { UniqueId } from "src/shared/domain/unique-id";
 import { Address, Country, Person } from "../../domain/entities";
-import { BVN_HASHER, IBvnHasher, INinHasher, NIN_HASHER } from "../../domain/services";
 
 export type CreatePersonCommand = {
     firstName: string,
@@ -19,8 +18,6 @@ export type CreatePersonCommand = {
     email: string,
     genderId:string,
     addressId?: string,
-    nin?: string,
-    bvn?: string
 }
 
 /**
@@ -35,9 +32,7 @@ export class CreatePersonUseCase implements UseCase<CreatePersonCommand , Person
         @Inject(PERSON_REPOSITORY) private readonly personRepository: IPersonRepository,
         @Inject(GENDER_REPOSITORY) private readonly genderRepository: IGenderRepository,
         @Inject(ADDRESS_REPOSITORY) private readonly addressRepository: IAddressRepository,
-        @Inject(COUNTRY_REPOSITORY) private readonly countryRepository: ICountryRepository,
-        @Inject(NIN_HASHER) private readonly ninHasher: INinHasher,
-        @Inject(BVN_HASHER) private readonly bvnHasher: IBvnHasher
+        @Inject(COUNTRY_REPOSITORY) private readonly countryRepository: ICountryRepository
     ) {}
 
     public async execute(dto: CreatePersonCommand): Promise<Result<PersonOutput>> {
@@ -78,24 +73,6 @@ export class CreatePersonUseCase implements UseCase<CreatePersonCommand , Person
             country = countryResult.value;
         }
 
-        let ninHash: NINHash | undefined; 
-        if(dto.nin) {
-            const ninResult = NIN.create(dto.nin);
-            if(ninResult.isFailure) return Result.fail(ninResult.error);
-            const ninHashResult = this.ninHasher.hash(ninResult.value);
-            if(ninHashResult.isFailure) return Result.fail(ninHashResult.error);
-            ninHash = ninHashResult.value;
-        }
-
-        let bvnHash: BVNHash | undefined;
-        if(dto.bvn) {
-            const bvnResult = BVN.create(dto.bvn);
-            if(bvnResult.isFailure) return Result.fail(bvnResult.error);
-            const bvnHashResult = this.bvnHasher.hash(bvnResult.value);
-            if(bvnHashResult.isFailure) return Result.fail(bvnHashResult.error);
-            bvnHash = bvnHashResult.value;
-        }
-
         // person entity creation and record saving
         const person = Person.create({
             dob,
@@ -103,9 +80,7 @@ export class CreatePersonUseCase implements UseCase<CreatePersonCommand , Person
             firstName,
             genderId,
             lastName,
-            addressId: address? address.id : undefined,
-            bvnHash,
-            ninHash
+            addressId: address? address.id : undefined
         });
         const saveResult = await this.personRepository.save(person);
         if(saveResult.isFailure) return Result.fail(saveResult.error);

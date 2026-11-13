@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
-import { INotificationService } from "../../../users/domain/services";
+import { INotificationService } from "../../domain/services";
 import mailConfig from "../../../users/infrastructure/config/mail.config";
 import { ConfigType } from "@nestjs/config";
 import { Result } from "src/shared/domain/result";
