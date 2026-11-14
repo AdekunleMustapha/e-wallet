@@ -1,2 +1,2 @@
 export * from "./identity.config";
-export * from "./mail.config";
+export * from "../../../auth/infrastructure/config/mail.config";

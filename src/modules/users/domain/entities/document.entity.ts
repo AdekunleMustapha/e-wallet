@@ -57,16 +57,30 @@ export class Document extends BaseEntity {
         return new Document(props);
     }
 
-    public markAsVerified(): void {
-        this._verified = true;
-        this.updateTimestamp();
-    }
-
-    public changeDocumentName(name: string): Result<void> {
-        if(name.trim().length === 0 || name.trim().length > 255) {
-            return Result.fail(new ValidationError("Name must be between 1 to 255 characters"));
+    public update(props: {
+        documentName?: string;
+        documentTypeId?: UniqueId;
+        verified?: boolean;
+    }): Result<void> {
+        if (props.documentName !== undefined) {
+            const documentName = props.documentName.trim();
+            if (documentName.length === 0 || documentName.length > 255) {
+                return Result.fail(new ValidationError("Document name should be between 1 to 255 characters"));
+            }
+            this._documentName = documentName;
         }
-        this._documentName = name.trim();
+
+        if (props.documentTypeId !== undefined) {
+            this._documentTypeId = props.documentTypeId;
+        }
+
+        if(props.verified !== undefined) {
+            if(this._verified === true && props.verified === false) {
+                return Result.fail(new ValidationError("A verified document can't be made unverified"));
+            }
+            this._verified = true;
+        }
+
         this.updateTimestamp();
         return Result.ok();
     }

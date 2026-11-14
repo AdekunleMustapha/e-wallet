@@ -23,7 +23,7 @@ export class EditDocumentTypeUseCase implements UseCase<EditDocumentTypeCommand,
         if(documentTypeResult.isFailure) return Result.fail(documentTypeResult.error);
 
         const documentType = documentTypeResult.value;
-        const changeResult = documentType.changeDocumentTypeName(dto.name);
+        const changeResult = documentType.update({ documentTypeName: dto.name });
         if(changeResult.isFailure) return Result.fail(changeResult.error);
 
         const result = await this.documentTypeRepository.update(documentType);

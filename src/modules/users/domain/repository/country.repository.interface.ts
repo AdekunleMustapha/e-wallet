@@ -5,7 +5,7 @@ import { PaginationOptions, PaginationResult } from "./person.repository.interfa
 
 export interface CountryPaginationFilters {
     countryName?: string;
-    countryCode?: number;
+    countryCode?: string;
 }
 
 export const COUNTRY_REPOSITORY = Symbol("COUNTRY_REPOSITORY");

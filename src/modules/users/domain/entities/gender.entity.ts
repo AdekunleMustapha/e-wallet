@@ -39,11 +39,14 @@ export class Gender extends BaseEntity {
         return new Gender(props);
     }
 
-    public changeName(name: string): Result<void> {
-        if(name.trim().length === 0 || name.trim().length > 50) {
-            return Result.fail(new ValidationError("Name must be between 1 to 50 characters"));
+    public update(props: { genderName?: string }): Result<void> {
+        if (props.genderName !== undefined) {
+            const genderName = props.genderName.trim();
+            if (genderName.length === 0 || genderName.length > 50) {
+                return Result.fail(new ValidationError("Gender must be between 1 to 50 characters"));
+            }
+            this._genderName = genderName;
         }
-        this._genderName = name.trim();
         this.updateTimestamp();
         return Result.ok();
     }

@@ -39,11 +39,14 @@ export class DocumentType extends BaseEntity {
         return new DocumentType(props);
     }
 
-    public changeDocumentTypeName(name: string): Result<void> {
-        if(name.trim().length === 0 || name.trim().length > 100) {
-            return Result.fail(new ValidationError("Name must be between 1 to 100 characters"));
+    public update(props: { documentTypeName?: string }): Result<void> {
+        if (props.documentTypeName) {
+            const documentTypeName = props.documentTypeName.trim();
+            if (documentTypeName.length === 0 || documentTypeName.length > 100) {
+                return Result.fail(new ValidationError("Name must be between 1 to 100 characters"));
+            }
+            this._documentTypeName = documentTypeName;
         }
-        this._documentTypeName = name.trim();
         this.updateTimestamp();
         return Result.ok();
     }

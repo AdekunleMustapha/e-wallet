@@ -8,16 +8,6 @@ export class EditCountryRequest {
 
     @IsOptional()
     @IsString()
-    @MaxLength(255)
-    name?: string;
-
-    @IsOptional()
-    @IsString()
     @Matches(/^\d{3}$/, { message: 'countryCode must be exactly 3 digits' })
     countryCode?: string;
-
-    @IsOptional()
-    @IsString()
-    @Matches(/^\d{3}$/, { message: 'code must be exactly 3 digits' })
-    code?: string;
 }

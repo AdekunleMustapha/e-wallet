@@ -87,10 +87,11 @@ export class EditPersonUseCase implements UseCase<EditPersonCommand, PersonOutpu
         const gender = genderResult.value;
 
         // update person entity
-        person.updateDetails({
-            addressId: address? address.id : undefined,
+        const updatePersonResult = person.update({
+            addressId: address ? address.id : undefined,
             email
         });
+        if(updatePersonResult.isFailure) return Result.fail(updatePersonResult.error);
         if(bvnHash) {
             const result = person.linkBvn(bvnHash);
             if(result.isFailure) return Result.fail(result.error);

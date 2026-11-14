@@ -5,11 +5,93 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AddressOrmEntity, CountryOrmEntity, DocumentOrmEntity, DocumentTypeOrmEntity, GenderOrmEntity, PersonOrmEntity } from "./infrastructure/persistence/orm-entities";
 import { ADDRESS_REPOSITORY, COUNTRY_REPOSITORY, DOCUMENT_REPOSITORY, DOCUMENT_TYPE_REPOSITORY, GENDER_REPOSITORY, PERSON_REPOSITORY } from "./domain/repository";
 import { AddressTypeOrmRepository, CountryTypeOrmRepository, DocumentTypeOrmRepository, DocumentTypeTypeOrmRepository, GenderTypeOrmRepository, PersonTypeOrmRepository } from "./infrastructure/persistence/repositories";
+import {
+    AddressController,
+    CountryController,
+    DocumentTypeController,
+    DocumentController,
+    GenderController,
+    PersonController,
+} from "./presentation/controllers";
+import {
+    CreateAddressUseCase,
+    EditAddressUseCase,
+    FindAddressByIdUseCase,
+    SearchAddressUseCase,
+    CreateCountryUseCase,
+    EditCountryUseCase,
+    GetCountryByIdUseCase,
+    DeleteCountryUseCase,
+    SearchCountryUseCase,
+    CreateDocumentTypeUseCase,
+    EditDocumentTypeUseCase,
+    GetAllDocumentTypeUseCase,
+    GetDocumentTypeByIdUseCase,
+    DeleteDocumentTypeUseCase,
+    CreateDocumentUseCase,
+    EditDocumentUseCase,
+    GetDocumentByIdUseCase,
+    DeleteDocumentUseCase,
+    SearchDocumentUseCase,
+    CreateGenderUseCase,
+    EditGenderUseCase,
+    GetAllGenderUseCase,
+    GetGenderByIdUseCase,
+    DeleteGenderUseCase,
+    CreatePersonUseCase,
+    EditPersonUseCase,
+    GetPersonByIdUseCase,
+    SearchPersonUseCase,
+} from "./application/use-cases";
+
+const controllers = [
+    AddressController,
+    CountryController,
+    DocumentTypeController,
+    DocumentController,
+    GenderController,
+    PersonController,
+];
+
+const useCases = [
+    // Address
+    CreateAddressUseCase,
+    EditAddressUseCase,
+    FindAddressByIdUseCase,
+    SearchAddressUseCase,
+    // Country
+    CreateCountryUseCase,
+    EditCountryUseCase,
+    GetCountryByIdUseCase,
+    DeleteCountryUseCase,
+    SearchCountryUseCase,
+    // Document Type
+    CreateDocumentTypeUseCase,
+    EditDocumentTypeUseCase,
+    GetAllDocumentTypeUseCase,
+    GetDocumentTypeByIdUseCase,
+    DeleteDocumentTypeUseCase,
+    // Document
+    CreateDocumentUseCase,
+    EditDocumentUseCase,
+    GetDocumentByIdUseCase,
+    DeleteDocumentUseCase,
+    SearchDocumentUseCase,
+    // Gender
+    CreateGenderUseCase,
+    EditGenderUseCase,
+    GetAllGenderUseCase,
+    GetGenderByIdUseCase,
+    DeleteGenderUseCase,
+    // Person
+    CreatePersonUseCase,
+    EditPersonUseCase,
+    GetPersonByIdUseCase,
+    SearchPersonUseCase,
+];
 
 @Module({
     imports: [
-        // Creates the injectable Repository<GenderOrmEntity> / Repository<PersonOrmEntity>
-        // that the adapters receive through @InjectRepository(...)
         TypeOrmModule.forFeature([
             GenderOrmEntity, 
             PersonOrmEntity,
@@ -19,7 +101,9 @@ import { AddressTypeOrmRepository, CountryTypeOrmRepository, DocumentTypeOrmRepo
             DocumentTypeOrmEntity,
         ])
     ],
+    controllers: [...controllers],
     providers: [
+        ...useCases,
         {provide: NIN_HASHER, useClass: HmacNINHasher},
         {provide: BVN_HASHER, useClass: HmacBVNHasher},
         // port (token)  ->  adapter (class)
@@ -32,6 +116,7 @@ import { AddressTypeOrmRepository, CountryTypeOrmRepository, DocumentTypeOrmRepo
         {provide: IDENTITY_VERIFICATION_SERVICE, useClass: MockIdentifierService}
     ],
     exports: [
+        ...useCases,
         NIN_HASHER, 
         BVN_HASHER,
         GENDER_REPOSITORY,

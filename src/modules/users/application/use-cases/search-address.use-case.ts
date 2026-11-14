@@ -12,8 +12,8 @@ export type SearchAddressCommand = {
 export type SearchAddressPaginationOutput = PaginationResult<AddressOutput>;
 
 @Injectable()
-export class SearchAddressByUseCase implements UseCase<SearchAddressCommand, SearchAddressPaginationOutput> {
-    private readonly logger = new Logger(SearchAddressByUseCase.name);
+export class SearchAddressUseCase implements UseCase<SearchAddressCommand, SearchAddressPaginationOutput> {
+    private readonly logger = new Logger(SearchAddressUseCase.name);
 
     constructor(
         @Inject(ADDRESS_REPOSITORY) private readonly addressRepository: IAddressRepository,
@@ -45,5 +45,3 @@ export class SearchAddressByUseCase implements UseCase<SearchAddressCommand, Sea
         });
     }
 }
-
-export { SearchAddressByUseCase as SearchAddressUseCase };

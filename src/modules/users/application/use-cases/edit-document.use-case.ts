@@ -29,21 +29,18 @@ export class EditDocumentUseCase implements UseCase<EditDocumentCommand, Documen
 
         const document = documentResult.value;
 
-        if(dto.documentName) {
-            const nameResult = document.changeDocumentName(dto.documentName);
-            if(nameResult.isFailure) return Result.fail(nameResult.error);
-        }
-
-        if(dto.verified) {
-            document.markAsVerified();
-        }
-
-        const updateResult = await this.documentRepository.update(document);
+        const updateResult = document.update({
+            documentName: dto.documentName,
+            verified: dto.verified,
+        });
         if(updateResult.isFailure) return Result.fail(updateResult.error);
+
+        const saveResult = await this.documentRepository.update(document);
+        if(saveResult.isFailure) return Result.fail(saveResult.error);
 
         const documentTypeResult = await this.documentTypeRepository.getById(document.documentTypeId);
         if(documentTypeResult.isFailure) return Result.fail(documentTypeResult.error);
 
-        return Result.ok(toDocumentOutput(updateResult.value, toDocumentTypeOutput(documentTypeResult.value)));
+        return Result.ok(toDocumentOutput(saveResult.value, toDocumentTypeOutput(documentTypeResult.value)));
     }
 }

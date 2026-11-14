@@ -90,13 +90,29 @@ export class Person extends BaseEntity {
         return Result.ok();
     }
 
-    public updateDetails(props: {
-        email?: Email,
+    public update(props: {
+        firstName?: Name;
+        lastName?: Name;
+        dob?: DOB;
+        email?: Email;
+        genderId?: UniqueId;
+        addressId?: UniqueId;
+    }): Result<void> {
+        if (props.firstName) this._firstName = props.firstName;
+        if (props.lastName) this._lastName = props.lastName;
+        if (props.dob) this._dob = props.dob;
+        if (props.email) this._email = props.email;
+        if (props.genderId) this._genderId = props.genderId;
+        if (props.addressId) this._addressId = props.addressId;
+        this.updateTimestamp();
+        return Result.ok();
+    }
+
+    public updatePublicDetails(props: {
+        email?: Email;
         addressId?: UniqueId;
     }): void {
-        if(props.email) this._email = props.email;
-        if(props.addressId) this._addressId = props.addressId;
-        this.updateTimestamp();
+        this.update(props);
     }
 
     get firstName(): Name { return this._firstName; }

@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { INotificationService } from "../../domain/services";
-import mailConfig from "../../../users/infrastructure/config/mail.config";
+import mailConfig from "../config/mail.config";
 import { ConfigType } from "@nestjs/config";
 import { Result } from "src/shared/domain/result";
 import { createTransport, Transporter } from "nodemailer";

@@ -23,7 +23,7 @@ export class EditCountryUseCase implements UseCase<EditCountryCommand, CountryOu
         if(countryResult.isFailure) return Result.fail(countryResult.error);
 
         const country = countryResult.value;
-        const changeResult = country.changeCountryDetails({ countryName: dto.name, countryCode: dto.code });
+        const changeResult = country.update({ countryName: dto.name, countryCode: dto.code });
         if(changeResult.isFailure) return Result.fail(changeResult.error);
 
         const result = await this.countryRepository.update(country);

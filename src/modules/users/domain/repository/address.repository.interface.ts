@@ -6,7 +6,7 @@ import { PaginationOptions, PaginationResult } from "./person.repository.interfa
 export interface AddressPaginationFilters {
     state?: string;
     city?: string;
-    countryId?: UniqueId;
+    countryId?: string;
     streetName?: string;
     postalCode?: string;
     buildingCode?: string;

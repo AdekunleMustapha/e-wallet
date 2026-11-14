@@ -3,16 +3,15 @@ import { UseCase } from "src/shared/application/use-case";
 import { AddressOutput, toAddressOutput, toCountryOutput } from "../dtos";
 import { ADDRESS_REPOSITORY, IAddressRepository } from "../../domain/repository";
 import { COUNTRY_REPOSITORY, ICountryRepository } from "../../domain/repository";
-import { Address } from "../../domain/entities";
 import { Result } from "src/shared/domain/result";
 import { UniqueId } from "src/shared/domain/unique-id";
 
 export type EditAddressCommand = {
     id: string;
-    countryId: string;
-    state: string;
-    city: string;
-    streetName: string;
+    countryId?: string;
+    state?: string;
+    city?: string;
+    streetName?: string;
     postalCode?: string;
     buildingCode?: string;
     flatCode?: string;
@@ -33,9 +32,16 @@ export class EditAddressUseCase implements UseCase<EditAddressCommand, AddressOu
         const id = UniqueId.createFromString(dto.id);
         const addressResult = await this.addressRepository.getById(id);
         if(addressResult.isFailure) return Result.fail(addressResult.error);
+        const address = addressResult.value;
 
-        const countryId = UniqueId.createFromString(dto.countryId);
-        const updatedAddressResult = Address.create({
+        let countryId: UniqueId | undefined;
+        if(dto.countryId) {
+            countryId = UniqueId.createFromString(dto.countryId);
+            const countryExists = await this.countryRepository.getById(countryId);
+            if(countryExists.isFailure) return Result.fail(countryExists.error);
+        }
+
+        const updatedAddressResult = address.update({
             countryId,
             state: dto.state,
             city: dto.city,
@@ -46,7 +52,7 @@ export class EditAddressUseCase implements UseCase<EditAddressCommand, AddressOu
         });
         if(updatedAddressResult.isFailure) return Result.fail(updatedAddressResult.error);
 
-        const result = await this.addressRepository.update(updatedAddressResult.value);
+        const result = await this.addressRepository.update(address);
         if(result.isFailure) return Result.fail(result.error);
 
         const countryResult = await this.countryRepository.getById(result.value.countryId);

@@ -4,8 +4,8 @@ import { UniqueId } from "src/shared/domain/unique-id";
 import { PaginationOptions, PaginationResult } from "./person.repository.interface";
 
 export interface DocumentPaginationFilters {
-    personId: UniqueId,
-    documentType?: UniqueId,
+    personId: string,
+    documentType?: string,
     documentName?: string,
     verified?: boolean
 }

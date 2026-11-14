@@ -3,7 +3,7 @@ import { UseCase } from "src/shared/application/use-case";
 import { AddressOutput, PersonOutput, toAddressOutput, toCountryOutput, toGenderOutput, toPersonOutput } from "../dtos";
 import { ADDRESS_REPOSITORY, COUNTRY_REPOSITORY, GENDER_REPOSITORY, IAddressRepository, ICountryRepository, IGenderRepository, IPersonRepository, PERSON_REPOSITORY } from "../../domain/repository";
 import { Result } from "src/shared/domain/result";
-import { BVN, BVNHash, DOB, Email, Name, NIN, NINHash } from "../../domain/value-objects";
+import { DOB, Email, Name } from "../../domain/value-objects";
 import { UniqueId } from "src/shared/domain/unique-id";
 import { Address, Country, Person } from "../../domain/entities";
 

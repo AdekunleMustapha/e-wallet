@@ -5,8 +5,12 @@ import { UniqueId } from "src/shared/domain/unique-id";
 
 export interface PersonPaginationFilters {
     genderId?: string,
-    dob?: DOB,
-    addressId?: UniqueId,
+    dob?: {
+        day: string,
+        month: string,
+        year: string
+    },
+    addressId?: string,
     searchQuery?: string
 }
 

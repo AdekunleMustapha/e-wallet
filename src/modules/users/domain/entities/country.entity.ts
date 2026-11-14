@@ -47,22 +47,24 @@ export class Country extends BaseEntity {
         return new Country(props);
     }
 
-    public changeCountryDetails(props: {
-        countryCode?: string,
-        countryName?: string
+    public update(props: {
+        countryCode?: string;
+        countryName?: string;
     }): Result<void> {
         if(props.countryName) {
-            if(props.countryName.trim().length === 0 || props.countryName.trim().length > 255) {
+            const countryName = props.countryName.trim();
+            if(countryName.length === 0 || countryName.length > 255) {
                 return Result.fail(new ValidationError("Name must be between 1 to 255 characters"));
             }
-            this._countryName = props.countryName.trim();
+            this._countryName = countryName;
         }
         
         if(props.countryCode) {
-            if(!/^\d{3}$/.test(props.countryCode)) {
+            const countryCode = props.countryCode.trim();
+            if(!/^\d{3}$/.test(countryCode)) {
                 return Result.fail(new ValidationError("Country code must equal 3 digits"));
             }
-            this._countryName = props.countryCode.trim();
+            this._countryCode = countryCode;
         }
         this.updateTimestamp();
         return Result.ok();

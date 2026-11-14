@@ -94,6 +94,74 @@ export class Address extends BaseEntity {
         return new Address(props);
     }
 
+    public update(props: {
+        countryId?: UniqueId;
+        state?: string;
+        city?: string;
+        streetName?: string;
+        postalCode?: string;
+        buildingCode?: string;
+        flatCode?: string;
+    }): Result<void> {
+        if(props.countryId) this._countryId = props.countryId;
+
+        if(props.state) {
+            const state = props.state.trim();
+            if(state.length === 0 || state.length > 100) {
+                return Result.fail(new ValidationError("State must be between 1 to 100 characters"));
+            }
+            this._state = state;
+        }
+
+        if(props.city) {
+            const city = props.city.trim();
+            if(city.length === 0 || city.length > 100) {
+                return Result.fail(new ValidationError("City must be between 1 to 100 characters"));
+            }
+            this._city = city;
+        }
+
+        if(props.streetName) {
+            const streetName = props.streetName.trim();
+            if(streetName.length === 0 || streetName.length > 100) {
+                return Result.fail(new ValidationError("Street name must be between 1 to 100 characters"));
+            }
+            this._streetName = streetName;
+        }
+
+        if(props.postalCode) {
+            const postalCode = props.postalCode.trim();
+            if(!/^\d{5,9}$/.test(postalCode)) {
+                return Result.fail(new ValidationError("Postal code must be between 5 to 9 digits"));
+            }
+            this._postalCode = postalCode;
+        }
+
+        if(props.buildingCode) {
+            const buildingCode = props.buildingCode.trim();
+            if(buildingCode) {
+                if(!/^[A-Za-z0-9-]{1,10}$/.test(buildingCode)) {
+                    return Result.fail(new ValidationError("Invalid building code"));
+                }
+            }
+            this._buildingCode = buildingCode;
+        }
+
+        if(props.flatCode) {
+            const flatCode = props.flatCode.trim();
+
+            if(flatCode) {
+                if(!/^[A-Za-z0-9-]{1,10}$/.test(flatCode)) {
+                    return Result.fail(new ValidationError("Invalid flat code"));
+                }
+            }
+            this._flatCode = flatCode;
+        }
+
+        this.updateTimestamp();
+        return Result.ok();
+    }
+
     get city(): string {return this._city;}
 
     get countryId(): UniqueId {return this._countryId;}

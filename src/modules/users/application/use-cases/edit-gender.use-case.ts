@@ -23,7 +23,9 @@ export class EditGenderUseCase implements UseCase<EditGenderCommand, GenderOutpu
         if(genderResult.isFailure) return Result.fail(genderResult.error);
 
         const gender = genderResult.value;
-        gender.changeName(dto.name);
+        const updateResult = gender.update({ genderName: dto.name });
+        if(updateResult.isFailure) return Result.fail(updateResult.error);
+
         const result = await this.genderRepository.update(gender);
         if(result.isFailure) return Result.fail(result.error);
 
