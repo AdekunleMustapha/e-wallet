@@ -53,12 +53,12 @@ export const envValidationSchema = Joi.object({
   // MAIL
   MAIL_HOST: Joi.string().when('NODE_ENV', {
     is: 'development',
-    then: Joi.string().optional().default("SMTP"),
+    then: Joi.string().allow(''),
     otherwise: Joi.string().required()
   }),
   MAIL_PORT: Joi.number().when('NODE_ENV', {
     is: 'development',
-    then: Joi.number().optional().default(587),
+    then: Joi.number().allow(''),
     otherwise: Joi.number().required()
   }),
   MAIL_PASSWORD: Joi.string().when('NODE_ENV', {
@@ -68,12 +68,12 @@ export const envValidationSchema = Joi.object({
   }),
   MAIL_FROM: Joi.string().when('NODE_ENV', {
     is: 'development',
-    then: Joi.string().optional().default("no-reply@e-wallet.com"),
+    then: Joi.string().allow(''),
     otherwise: Joi.string().required()
   }),
   MAIL_USER: Joi.string().when('NODE_ENV', {
     is: 'development',
-    then: Joi.string().optional(),
+    then: Joi.string().allow(''),
     otherwise: Joi.string().required()
   }),
   MAIL_SECURE: Joi.boolean().default(true),

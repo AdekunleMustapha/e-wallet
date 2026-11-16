@@ -12,9 +12,9 @@ export class DocumentTypeOrmEntity {
     @Column({name: "document_type_name", type: "varchar", length: 255, unique: true})
     documentTypeName!: string;
 
-    @Column({name: "created_at", type: "datetime", precision: 3})
+    @Column({name: "created_at", type: "timestamp", precision: 3})
     createdAt!: Date;
 
-    @Column({name: "updated_at", type: "datetime", precision: 3})
+    @Column({name: "updated_at", type: "timestamp", precision: 3})
     updatedAt!: Date;
 }

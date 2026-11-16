@@ -15,9 +15,9 @@ export class CountryOrmEntity {
     @Column({name: "country_code", type: "char",  length: 3, unique: true})
     countryCode!: string;
 
-    @Column({name: "created_at", type: "datetime", precision: 3})
+    @Column({name: "created_at", type: "timestamp", precision: 3})
     createdAt!: Date;
 
-    @Column({name: "updated_at", type: "datetime", precision: 3})
+    @Column({name: "updated_at", type: "timestamp", precision: 3})
     updatedAt!: Date;
 }

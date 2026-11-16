@@ -35,9 +35,9 @@ export class PersonOrmEntity {
     @Column({name: "bvn_hash", type: "char", length: 64, nullable: true})
     bvnHash!: string | null;
 
-    @Column({name: "created_at", type: "datetime", precision: 3})
+    @Column({name: "created_at", type: "timestamp", precision: 3})
     createdAt!: Date;
 
-    @Column({name: "updated_at", type: "datetime", precision: 3})
+    @Column({name: "updated_at", type: "timestamp", precision: 3})
     updatedAt!: Date;
 }

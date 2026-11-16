@@ -26,9 +26,9 @@ export class DocumentOrmEntity {
     @Column({type: "boolean", default: false})
     verified!: boolean;
 
-    @Column({name: "created_at", type: "datetime", precision: 3})
+    @Column({name: "created_at", type: "timestamp", precision: 3})
     createdAt!: Date;
 
-    @Column({name: "updated_at", type: "datetime", precision: 3})
+    @Column({name: "updated_at", type: "timestamp", precision: 3})
     updatedAt!: Date;
 }

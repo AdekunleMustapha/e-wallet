@@ -1,7 +1,7 @@
 {
-  "name": "fintech-backend",
-  "version": "0.1.0",
-  "description": "NestJS fintech backend: clean architecture, MySQL, TypeORM migrations, raw SQL, Winston, Redis",
+  "name": "e-wallet",
+  "version": "1.0",
+  "description": "NestJS fintech e-wallet backend: clean architecture, PostgreSQL, TypeORM migrations, raw SQL, Winston, Redis",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -29,8 +29,8 @@
     "dotenv": "^16.4.5",
     "ioredis": "^5.4.1",
     "joi": "^17.13.3",
-    "mysql2": "^3.11.0",
     "nodemailer": "^10.5.0",
+    "pg": "^8.23.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.20",

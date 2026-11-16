@@ -1,15 +1,15 @@
 services:
   e-wallet-persistence:
-    image: postgres:16-alpine
+    image: postgres:16
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER}
+      POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - e_wallet_pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
@@ -21,9 +21,9 @@ services:
     restart: unless-stopped
     command: ["redis-server", "--appendonly", "yes"]
     ports:
-      - "6379:6379"
+      - "6378:6379"
     volumes:
-      - redisdata:/data
+      - e_wallet_redisdata:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -32,27 +32,27 @@ services:
 
   # Optional: run the app in a container instead of natively.
   # Start it with: docker compose --profile app up
-  e-wallet-api:
-    profiles: ["app"]
-    build:
-      context: .
-      target: dev
-    env_file: .env
-    environment:
-      # inside the compose network, use service names, not localhost
-      DB_HOST: e-wallet-persistence
-      REDIS_HOST: e-wallet-cache
-    ports:
-      - "3000:3000"
-    volumes:
-      - .:/app
-      - /app/node_modules # keep container's node_modules, don't overwrite with host's
-    depends_on:
-      e-wallet-persistence:
-        condition: service_healthy
-      e-wallet-cache:
-        condition: service_healthy
+  # e-wallet-api:
+  #   profiles: ["app"]
+  #   build:
+  #     context: .
+  #     target: dev
+  #   env_file: .env
+  #   environment:
+  #     # inside the compose network, use service names, not localhost
+  #     DB_HOST: e-wallet-persistence
+  #     REDIS_HOST: e-wallet-cache
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules # keep container's node_modules, don't overwrite with host's
+  #   depends_on:
+  #     e-wallet-persistence:
+  #       condition: service_healthy
+  #     e-wallet-cache:
+  #       condition: service_healthy
 
 volumes:
-  pgdata:
-  redisdata:
+  e_wallet_pgdata:
+  e_wallet_redisdata:

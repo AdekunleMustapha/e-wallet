@@ -1,16 +1,16 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class CreateDocumentAndDocumentType1792802381972 implements MigrationInterface {
-    name = "CreateDocumentAndDocumentType1792802381972";
+    name = "CreateDocumentAndDocumentType";
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
             CREATE TABLE document_types (
                 id CHAR(36) NOT NULL PRIMARY KEY,
                 document_type_name VARCHAR(255) NOT NULL UNIQUE,
-                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-                updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+                updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
+            );
         `);
         
         await queryRunner.query(`
@@ -21,11 +21,12 @@ export class CreateDocumentAndDocumentType1792802381972 implements MigrationInte
                 document_name VARCHAR(255) NOT NULL,
                 document_link VARCHAR(255) NOT NULL,
                 verified BOOLEAN NOT NULL DEFAULT FALSE,
-                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-                updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-                KEY idx_documents_person_id (person_id),
-                KEY idx_documents_document_type_id (document_type_id)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+                updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
+            );
+
+            CREATE INDEX idx_documents_person_id ON documents(person_id);
+            CREATE INDEX idx_documents_document_type_id ON documents(document_type_id);
         `);
     }
 

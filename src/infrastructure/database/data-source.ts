@@ -9,11 +9,11 @@ import { buildTypeOrmOptions } from './typeorm.options';
  */
 export default new DataSource(
   buildTypeOrmOptions({
-    host: process.env.DB_HOST ?? '127.0.0.1',
-    port: parseInt(process.env.DB_PORT ?? '3306', 10),
-    username: process.env.DB_USERNAME ?? 'root',
+    host: process.env.DB_HOST ?? 'localhost',
+    port: parseInt(process.env.DB_PORT ?? '5432', 10),
+    username: process.env.DB_USERNAME ?? 'e_wallet_user',
     password: process.env.DB_PASSWORD ?? '',
-    database: process.env.DB_NAME ?? 'fintech',
+    database: process.env.DB_NAME ?? 'e-wallet',
     poolSize: parseInt(process.env.DB_POOL_SIZE ?? '10', 10),
     logging: process.env.DB_LOGGING === 'true',
   }),
