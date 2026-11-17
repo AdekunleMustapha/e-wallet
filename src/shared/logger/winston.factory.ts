@@ -42,7 +42,12 @@ const redact = winston.format((info) => {
     }
     return out;
   };
-  return walk(info) as winston.Logform.TransformableInfo;
+
+  const clean = walk(info) as Record<string, unknown>;
+  for (const key of Object.keys(clean)) {
+    (info as Record<string, unknown>)[key] = clean[key];
+  }
+  return info; // original object, Symbol keys intact
 });
 
 export function createWinstonLogger(opts: WinstonFactoryOptions): winston.Logger {

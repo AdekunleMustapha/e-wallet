@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class CreateDocumentAndDocumentType1792802381972 implements MigrationInterface {
-    name = "CreateDocumentAndDocumentType";
+    name = "CreateDocumentAndDocumentType1792802381972";
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`

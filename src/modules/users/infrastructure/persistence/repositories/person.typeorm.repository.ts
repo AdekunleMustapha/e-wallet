@@ -24,8 +24,10 @@ const SORTABLE_COLUMNS: Record<string, string> = {
     email: "p.email",
     dob: "p.dob",
     firstName: "p.firstName",
-    lastName: "p.lastName"
-}
+    lastName: "p.lastName",
+    phoneNumber: "p.phoneNumber",
+    tier: "p.tier",
+};
 
 const MAX_PAGE_SIZE = 100;
 
@@ -35,7 +37,7 @@ export class PersonTypeOrmRepository implements IPersonRepository {
     constructor(
         @InjectRepository(PersonOrmEntity)
         private readonly orm: Repository<PersonOrmEntity>
-    ){}
+    ) {}
 
     public async save(person: Person): Promise<Result<Person>> {
         try {
@@ -48,9 +50,9 @@ export class PersonTypeOrmRepository implements IPersonRepository {
 
     public async update(person: Person): Promise<Result<Person>> {
         try {
-            const {id, ...columns} = PersonMapper.toOrm(person);
-            const result = await this.orm.update({id}, columns);
-            if(!result.affected) {
+            const { id, ...columns } = PersonMapper.toOrm(person);
+            const result = await this.orm.update({ id }, columns);
+            if (!result.affected) {
                 return Result.fail(new NotFoundError("Person not found"));
             }
             return Result.ok(person);
@@ -69,35 +71,54 @@ export class PersonTypeOrmRepository implements IPersonRepository {
 
             const queryBuilder = this.orm.createQueryBuilder('p');
 
-            if(filters.genderId) {
-                queryBuilder.andWhere('p.genderId = :genderId', {genderId: filters.genderId});
+            if (filters.gender) {
+                queryBuilder.andWhere('p.gender = :gender', { gender: filters.gender });
             }
 
-            if(filters.addressId) {
-                queryBuilder.andWhere("p.addressId = :addressId", {addressId: filters.addressId});
+            if (filters.phoneNumber) {
+                queryBuilder.andWhere('p.phoneNumber = :phoneNumber', { phoneNumber: filters.phoneNumber });
             }
 
-            if(filters.dob) {
-                queryBuilder.andWhere("p.dob = :dob", {dob: filters.dob});
+            if (filters.country) {
+                queryBuilder.andWhere('p.country = :country', { country: filters.country });
             }
 
-            if(filters.searchQuery?.trim()) {
+            if (filters.state) {
+                queryBuilder.andWhere('p.state = :state', { state: filters.state });
+            }
+
+            if (filters.city) {
+                queryBuilder.andWhere('p.city = :city', { city: filters.city });
+            }
+
+            if (filters.tier) {
+                queryBuilder.andWhere('p.tier = :tier', { tier: filters.tier });
+            }
+
+            if (filters.dob) {
+                const dobString = `${filters.dob.year}-${filters.dob.month}-${filters.dob.day}`;
+                queryBuilder.andWhere('p.dob = :dob', { dob: dobString });
+            }
+
+            if (filters.searchQuery?.trim()) {
                 // escape LIKE wildcards so a user typing "%" or "_" searches for those characters
                 const escaped = filters.searchQuery.trim().replace(/[\\%_]/g, (c) => `\\${c}`);
                 queryBuilder.andWhere(
                     new Brackets((b) =>
                         b
-                            .where('p.firstName LIKE :q', {q: `%${escaped}%`})
+                            .where('p.firstName LIKE :q', { q: `%${escaped}%` })
                             .orWhere('p.lastName LIKE :q')
+                            .orWhere('p.middleName LIKE :q')
                             .orWhere('p.email LIKE :q')
+                            .orWhere('p.phoneNumber LIKE :q')
                     ),
                 );
             }
 
             const sortColumn = SORTABLE_COLUMNS[options.sortBy ?? ''] ?? SORTABLE_COLUMNS.createdAt;
-            queryBuilder.orderBy(sortColumn, options.sortOrder === "ASC"? "ASC" : "DESC")
+            queryBuilder.orderBy(sortColumn, options.sortOrder === "ASC" ? "ASC" : "DESC")
                 .skip((page - 1) * limit)
-                .take(limit)
+                .take(limit);
 
             const [rows, total] = await queryBuilder.getManyAndCount();
 
@@ -106,7 +127,7 @@ export class PersonTypeOrmRepository implements IPersonRepository {
                 total,
                 limit,
                 page,
-                totalPages: Math.ceil(total / limit)
+                totalPages: Math.ceil(total / limit),
             });
         } catch (error) {
             return Result.fail(translateDBErrors(error, "search persons"));
@@ -115,8 +136,8 @@ export class PersonTypeOrmRepository implements IPersonRepository {
 
     public async getById(id: UniqueId): Promise<Result<Person>> {
         try {
-            const row = await this.orm.findOneBy({id: id.value});
-            if(!row) {
+            const row = await this.orm.findOneBy({ id: id.value });
+            if (!row) {
                 return Result.fail(new NotFoundError("Person not found"));
             }
             return Result.ok(PersonMapper.toDomain(row));

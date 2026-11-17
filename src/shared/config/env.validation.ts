@@ -49,6 +49,7 @@ export const envValidationSchema = Joi.object({
     then: Joi.string().allow('').required(),
     otherwise: Joi.string().min(32).required()
   }),
+  PASSWORD_PEPPER: Joi.string().required(),
 
   // MAIL
   MAIL_HOST: Joi.string().when('NODE_ENV', {

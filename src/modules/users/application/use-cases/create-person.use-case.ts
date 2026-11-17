@@ -1,99 +1,121 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { UseCase } from "src/shared/application/use-case";
-import { AddressOutput, PersonOutput, toAddressOutput, toCountryOutput, toGenderOutput, toPersonOutput } from "../dtos";
-import { ADDRESS_REPOSITORY, COUNTRY_REPOSITORY, GENDER_REPOSITORY, IAddressRepository, ICountryRepository, IGenderRepository, IPersonRepository, PERSON_REPOSITORY } from "../../domain/repository";
+import { PersonOutput, toPersonOutput } from "../dtos";
+import { IPersonRepository, PERSON_REPOSITORY } from "../../domain/repository";
 import { Result } from "src/shared/domain/result";
-import { DOB, Email, Name } from "../../domain/value-objects";
-import { UniqueId } from "src/shared/domain/unique-id";
-import { Address, Country, Person } from "../../domain/entities";
+import { DOB, Email, Name, Password, PhoneNumber } from "../../domain/value-objects";
+import { Person } from "../../domain/entities";
+import { Country, Gender } from "../../domain/enums";
+import { ValidationError } from "src/shared/domain/errors";
+import { IPasswordHasherService, PASSWORD_HASHER } from "../../domain/services";
 
 export type CreatePersonCommand = {
-    firstName: string,
-    lastName: string,
+    firstName: string;
+    lastName: string;
+    middleName?: string;
     dob: {
-        year: string,
-        month: string,
-        day: string
-    },
-    email: string,
-    genderId:string,
-    addressId?: string,
-}
+        year: string;
+        month: string;
+        day: string;
+    };
+    email: string;
+    phoneNumber: string;
+    gender: Gender;
+    country: Country;
+    state: string;
+    city: string;
+    addressLine1: string;
+    postalCode?: string;
+    password: string;
+};
 
-/**
- * Simple person record creation
- * Currently allows adding of nin and bvn without verifying it with dob or full name
- */
 @Injectable()
-export class CreatePersonUseCase implements UseCase<CreatePersonCommand , PersonOutput> {
+export class CreatePersonUseCase implements UseCase<CreatePersonCommand, PersonOutput> {
     private readonly logger = new Logger(CreatePersonUseCase.name);
 
     constructor(
         @Inject(PERSON_REPOSITORY) private readonly personRepository: IPersonRepository,
-        @Inject(GENDER_REPOSITORY) private readonly genderRepository: IGenderRepository,
-        @Inject(ADDRESS_REPOSITORY) private readonly addressRepository: IAddressRepository,
-        @Inject(COUNTRY_REPOSITORY) private readonly countryRepository: ICountryRepository
+        @Inject(PASSWORD_HASHER) private readonly passwordHasher: IPasswordHasherService,
     ) {}
 
     public async execute(dto: CreatePersonCommand): Promise<Result<PersonOutput>> {
         this.logger.log("Execute create person use case");
 
-        // validation
+        // Validation
         const firstNameResult = Name.create(dto.firstName);
-        if(firstNameResult.isFailure) return Result.fail(firstNameResult.error);
+        if (firstNameResult.isFailure) return Result.fail(firstNameResult.error);
         const firstName = firstNameResult.value;
 
         const lastNameResult = Name.create(dto.lastName);
-        if(lastNameResult.isFailure) return Result.fail(lastNameResult.error);
+        if (lastNameResult.isFailure) return Result.fail(lastNameResult.error);
         const lastName = lastNameResult.value;
 
-        const dobResult = DOB.create({day: dto.dob.day, month: dto.dob.month, year: dto.dob.year});
-        if(dobResult.isFailure) return Result.fail(dobResult.error);
+        let middleName: Name | undefined;
+        if (dto.middleName) {
+            const middleNameResult = Name.create(dto.middleName);
+            if (middleNameResult.isFailure) return Result.fail(middleNameResult.error);
+            middleName = middleNameResult.value;
+        }
+
+        const dobResult = DOB.create({ day: dto.dob.day, month: dto.dob.month, year: dto.dob.year });
+        if (dobResult.isFailure) return Result.fail(dobResult.error);
         const dob = dobResult.value;
 
         const emailResult = Email.create(dto.email);
-        if(emailResult.isFailure) return Result.fail(emailResult.error);
+        if (emailResult.isFailure) return Result.fail(emailResult.error);
         const email = emailResult.value;
 
-        const genderId = UniqueId.createFromString(dto.genderId);
-        const genderResult = await this.genderRepository.getById(genderId);
-        if(genderResult.isFailure) return Result.fail(genderResult.error);
-        const gender = genderResult.value;
+        const phoneResult = PhoneNumber.create(dto.phoneNumber);
+        if (phoneResult.isFailure) return Result.fail(phoneResult.error);
+        const phoneNumber = phoneResult.value;
 
-        let address: Address | undefined;
-        let country: Country | undefined;
-        if(dto.addressId) {
-            const addressId = UniqueId.createFromString(dto.addressId);
-            const addressResult = await this.addressRepository.getById(addressId);
-            if(addressResult.isFailure) return Result.fail(addressResult.error);
-            address = addressResult.value;
+        const passwordResult = Password.create(dto.password);
+        if (passwordResult.isFailure) return Result.fail(passwordResult.error);
 
-            const countryResult = await this.countryRepository.getById(address.countryId);
-            if(countryResult.isFailure) return Result.fail(countryResult.error);
-            country = countryResult.value;
+        const passwordHashResult = this.passwordHasher.hash(passwordResult.value);
+        if (passwordHashResult.isFailure) return Result.fail(passwordHashResult.error);
+        const passwordHash = passwordHashResult.value;
+
+        if (!Object.values(Gender).includes(dto.gender)) {
+            return Result.fail(new ValidationError("Invalid gender"));
         }
 
-        // person entity creation and record saving
+        if (!Object.values(Country).includes(dto.country)) {
+            return Result.fail(new ValidationError("Invalid country"));
+        }
+
+        if (!dto.state?.trim()) {
+            return Result.fail(new ValidationError("State cannot be empty"));
+        }
+
+        if (!dto.city?.trim()) {
+            return Result.fail(new ValidationError("City cannot be empty"));
+        }
+
+        if (!dto.addressLine1?.trim()) {
+            return Result.fail(new ValidationError("Address line 1 cannot be empty"));
+        }
+
+        // Person entity creation
         const person = Person.create({
+            firstName,
+            lastName,
+            middleName,
             dob,
             email,
-            firstName,
-            genderId,
-            lastName,
-            addressId: address? address.id : undefined
+            phoneNumber,
+            gender: dto.gender,
+            country: dto.country,
+            state: dto.state.trim(),
+            city: dto.city.trim(),
+            addressLine1: dto.addressLine1.trim(),
+            postalCode: dto.postalCode?.trim(),
+            passwordHash,
         });
+
         const saveResult = await this.personRepository.save(person);
-        if(saveResult.isFailure) return Result.fail(saveResult.error);
-        
-        // return out put
-        const genderOutput = toGenderOutput(gender);
-        let addressOutput: AddressOutput | undefined;
-        if(address && country) {
-            addressOutput = toAddressOutput(address, toCountryOutput(country));
-        }
-        const personOutput = toPersonOutput(person, genderOutput, addressOutput);
-        
-        // return Result
-        return Result.ok(personOutput);
+        if (saveResult.isFailure) return Result.fail(saveResult.error);
+
+        return Result.ok(toPersonOutput(person));
     }
-};
+}
