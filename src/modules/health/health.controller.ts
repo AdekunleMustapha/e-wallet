@@ -11,15 +11,15 @@ export class HealthController {
 
   @Get()
   async check() {
-    const [mysql, redis] = await Promise.allSettled([
+    const [pgsql, redis] = await Promise.allSettled([
       this.db.query('SELECT 1'),
       this.redis.ping(),
     ]);
-    const mysqlUp = mysql.status === 'fulfilled';
+    const pgsqlUp = pgsql.status === 'fulfilled';
     const redisUp = redis.status === 'fulfilled' && redis.value === true;
     return {
-      status: mysqlUp && redisUp ? 'ok' : 'degraded',
-      mysql: mysqlUp ? 'up' : 'down',
+      status: pgsqlUp && redisUp ? 'ok' : 'degraded',
+      pgsql: pgsqlUp ? 'up' : 'down',
       redis: redisUp ? 'up' : 'down',
       uptimeSeconds: Math.round(process.uptime()),
     };

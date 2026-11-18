@@ -79,16 +79,17 @@ export class PersonTypeOrmRepository implements IPersonRepository {
                 queryBuilder.andWhere('p.phoneNumber = :phoneNumber', { phoneNumber: filters.phoneNumber });
             }
 
-            if (filters.country) {
-                queryBuilder.andWhere('p.country = :country', { country: filters.country });
+            // exact matches, ignoring case: "lagos", "LAGOS" and "Lagos" all work
+            if (filters.country?.trim()) {
+                queryBuilder.andWhere('LOWER(p.country) = LOWER(:country)', { country: filters.country.trim() });
             }
 
-            if (filters.state) {
-                queryBuilder.andWhere('p.state = :state', { state: filters.state });
+            if (filters.state?.trim()) {
+                queryBuilder.andWhere('LOWER(p.state) = LOWER(:state)', { state: filters.state.trim() });
             }
 
-            if (filters.city) {
-                queryBuilder.andWhere('p.city = :city', { city: filters.city });
+            if (filters.city?.trim()) {
+                queryBuilder.andWhere('LOWER(p.city) = LOWER(:city)', { city: filters.city.trim() });
             }
 
             if (filters.tier) {
@@ -101,22 +102,24 @@ export class PersonTypeOrmRepository implements IPersonRepository {
             }
 
             if (filters.searchQuery?.trim()) {
-                // escape LIKE wildcards so a user typing "%" or "_" searches for those characters
+                // case-insensitive partial match; escape LIKE wildcards so "%" or "_" are searched literally
                 const escaped = filters.searchQuery.trim().replace(/[\\%_]/g, (c) => `\\${c}`);
                 queryBuilder.andWhere(
                     new Brackets((b) =>
                         b
-                            .where('p.firstName LIKE :q', { q: `%${escaped}%` })
-                            .orWhere('p.lastName LIKE :q')
-                            .orWhere('p.middleName LIKE :q')
-                            .orWhere('p.email LIKE :q')
-                            .orWhere('p.phoneNumber LIKE :q')
+                            .where('p.firstName ILIKE :q', { q: `%${escaped}%` })
+                            .orWhere('p.lastName ILIKE :q')
+                            .orWhere('p.middleName ILIKE :q')
+                            .orWhere('p.email ILIKE :q')
+                            .orWhere('p.phoneNumber ILIKE :q')
                     ),
                 );
             }
 
             const sortColumn = SORTABLE_COLUMNS[options.sortBy ?? ''] ?? SORTABLE_COLUMNS.createdAt;
-            queryBuilder.orderBy(sortColumn, options.sortOrder === "ASC" ? "ASC" : "DESC")
+            // the request allows "asc"/"desc" in any case, so compare upper-cased
+            queryBuilder.orderBy(sortColumn, options.sortOrder?.toUpperCase() === "ASC" ? "ASC" : "DESC")
+                .addOrderBy('p.id', 'ASC') // stable order so pages never overlap
                 .skip((page - 1) * limit)
                 .take(limit);
 

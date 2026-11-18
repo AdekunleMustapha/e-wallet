@@ -1,12 +1,12 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { UseCase } from "src/shared/application/use-case";
 import { PersonOutput, toPersonOutput } from "../dtos";
-import { IPersonRepository, PERSON_REPOSITORY } from "../../domain/repository";
+import { CITY_REPOSITORY, ICityRepository, IPersonRepository, PERSON_REPOSITORY } from "../../domain/repository";
 import { Result } from "src/shared/domain/result";
 import { DOB, Email, Name, Password, PhoneNumber } from "../../domain/value-objects";
 import { Person } from "../../domain/entities";
-import { Country, Gender } from "../../domain/enums";
-import { ValidationError } from "src/shared/domain/errors";
+import { Country, Gender, NigeriaState, Tier } from "../../domain/enums";
+import { NotFoundError, ValidationError } from "src/shared/domain/errors";
 import { IPasswordHasherService, PASSWORD_HASHER } from "../../domain/services";
 
 export type CreatePersonCommand = {
@@ -22,7 +22,7 @@ export type CreatePersonCommand = {
     phoneNumber: string;
     gender: Gender;
     country: Country;
-    state: string;
+    state: NigeriaState;
     city: string;
     addressLine1: string;
     postalCode?: string;
@@ -36,6 +36,7 @@ export class CreatePersonUseCase implements UseCase<CreatePersonCommand, PersonO
     constructor(
         @Inject(PERSON_REPOSITORY) private readonly personRepository: IPersonRepository,
         @Inject(PASSWORD_HASHER) private readonly passwordHasher: IPasswordHasherService,
+        @Inject(CITY_REPOSITORY) private readonly cityRepository: ICityRepository
     ) {}
 
     public async execute(dto: CreatePersonCommand): Promise<Result<PersonOutput>> {
@@ -84,13 +85,16 @@ export class CreatePersonUseCase implements UseCase<CreatePersonCommand, PersonO
             return Result.fail(new ValidationError("Invalid country"));
         }
 
-        if (!dto.state?.trim()) {
-            return Result.fail(new ValidationError("State cannot be empty"));
+        if (!Object.values(NigeriaState).includes(dto.state)) {
+            return Result.fail(new ValidationError("Invalid state"));
         }
 
-        if (!dto.city?.trim()) {
-            return Result.fail(new ValidationError("City cannot be empty"));
+        const cityResult = await this.cityRepository.search({ city: dto.city, state: dto.state }, { limit: 1, page: 1 });
+        if (cityResult.isFailure) return Result.fail(cityResult.error);
+        if (!cityResult.value.data.length) {
+            return Result.fail(new NotFoundError("City not found in the specified state"));
         }
+        const city = cityResult.value.data[0].city.name;
 
         if (!dto.addressLine1?.trim()) {
             return Result.fail(new ValidationError("Address line 1 cannot be empty"));
@@ -106,11 +110,12 @@ export class CreatePersonUseCase implements UseCase<CreatePersonCommand, PersonO
             phoneNumber,
             gender: dto.gender,
             country: dto.country,
-            state: dto.state.trim(),
-            city: dto.city.trim(),
+            state: dto.state,
+            city,
             addressLine1: dto.addressLine1.trim(),
             postalCode: dto.postalCode?.trim(),
             passwordHash,
+            tier: Tier.TIER_ONE
         });
 
         const saveResult = await this.personRepository.save(person);

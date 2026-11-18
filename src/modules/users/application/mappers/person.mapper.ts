@@ -10,7 +10,7 @@ import { Country, Gender, Tier } from "../../domain/enums";
  * in most cases there shouldn't be an error when getting the value object.
  * In cases where errors occur, an error is thrown for the class that uses it to catch.
  */
-function must<T>(result: Result<T>, field: string, id: string): T {
+export function must<T>(result: Result<T>, field: string, id: string): T {
     if (result.isFailure) {
         throw new Error(`Error found in person mapper\nField: ${field}\nId: ${id}\nTable: people`);
     }

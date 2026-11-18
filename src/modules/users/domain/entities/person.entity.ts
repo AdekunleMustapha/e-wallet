@@ -83,13 +83,8 @@ export class Person extends BaseEntity {
      * Business creation: a brand-new person. Id and timestamps are generated.
      * Tier defaults to Tier 1 if not specified.
      */
-    public static create(
-        props: Omit<PersonProps, 'id' | 'createdAt' | 'updatedAt' | 'tier'> & { tier?: Tier }
-    ): Person {
-        return new Person({
-            ...props,
-            tier: props.tier ?? Tier.TIER_ONE,
-        });
+    public static create(props: Omit<PersonProps, 'id' | 'createdAt' | 'updatedAt'>): Person {
+        return new Person(props);
     }
 
     /**

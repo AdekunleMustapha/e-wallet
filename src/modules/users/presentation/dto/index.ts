@@ -14,3 +14,5 @@ export * from './edit-document-type.request';
 export * from './create-document.request';
 export * from './edit-document.request';
 export * from './search-document.request';
+
+export * from './search-city.request';

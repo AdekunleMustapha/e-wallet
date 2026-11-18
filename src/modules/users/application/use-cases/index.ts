@@ -20,3 +20,7 @@ export * from './link-bvn.use-case';
 export * from './link-nin.use-case';
 export * from './upgrade-tier.use-case';
 export * from './change-password.use-case';
+
+// City
+export * from './get-state.use-case';
+export * from './search-city.use-case';

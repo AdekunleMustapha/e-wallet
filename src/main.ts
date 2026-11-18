@@ -8,6 +8,7 @@ import { AppLogger } from './shared/logger/app-logger.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.useLogger(app.get(AppLogger));
+  app.setGlobalPrefix(`api/v${app.get(ConfigService).getOrThrow<number>('app.version')}`)
   app.enableShutdownHooks();
   app.useGlobalPipes(
     new ValidationPipe({ 

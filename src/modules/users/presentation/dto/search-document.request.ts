@@ -12,10 +12,6 @@ export class SearchDocumentRequest extends PaginationRequest {
     documentTypeId?: string;
 
     @IsOptional()
-    @IsUUID()
-    documentType?: string;
-
-    @IsOptional()
     @IsString()
     documentName?: string;
 

@@ -1,7 +1,7 @@
 import { IsEnum, IsOptional, IsString, Matches } from "class-validator";
 import { PaginationRequest } from "./pagination.request";
 import { DOB_PATTERN } from "./dob";
-import { Country, Gender, Tier } from "../../domain/enums";
+import { Country, Gender, NigeriaState, Tier } from "../../domain/enums";
 
 export class SearchPersonRequest extends PaginationRequest {
     @IsOptional()
@@ -17,8 +17,8 @@ export class SearchPersonRequest extends PaginationRequest {
     country?: Country;
 
     @IsOptional()
-    @IsString()
-    state?: string;
+    @IsEnum(NigeriaState)
+    state?: NigeriaState;
 
     @IsOptional()
     @IsString()

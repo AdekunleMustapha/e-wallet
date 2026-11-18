@@ -53,7 +53,7 @@ export class DocumentController {
         };
         const filters: DocumentPaginationFilters = {
             personId: query.personId!,
-            documentType: query.documentTypeId || query.documentType,
+            documentType: query.documentTypeId,
             documentName: query.documentName,
             verified: query.verified,
         };

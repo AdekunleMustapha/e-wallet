@@ -12,13 +12,14 @@ import {
     MockIdentifierService 
 } from "./infrastructure/services";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DocumentOrmEntity, DocumentTypeOrmEntity, PersonOrmEntity } from "./infrastructure/persistence/orm-entities";
-import { DOCUMENT_REPOSITORY, DOCUMENT_TYPE_REPOSITORY, PERSON_REPOSITORY } from "./domain/repository";
-import { DocumentTypeOrmRepository, DocumentTypeTypeOrmRepository, PersonTypeOrmRepository } from "./infrastructure/persistence/repositories";
+import { CityOrmEntity, DocumentOrmEntity, DocumentTypeOrmEntity, PersonOrmEntity } from "./infrastructure/persistence/orm-entities";
+import { CITY_REPOSITORY, DOCUMENT_REPOSITORY, DOCUMENT_TYPE_REPOSITORY, PERSON_REPOSITORY } from "./domain/repository";
+import { CityTypeOrmRepository, DocumentTypeOrmRepository, DocumentTypeTypeOrmRepository, PersonTypeOrmRepository } from "./infrastructure/persistence/repositories";
 import {
     DocumentTypeController,
     DocumentController,
     PersonController,
+    CityController,
 } from "./presentation/controllers";
 import {
     CreateDocumentTypeUseCase,
@@ -38,12 +39,15 @@ import {
     LinkNinUseCase,
     UpgradeTierUseCase,
     ChangePasswordUseCase,
+    GetStateUseCase,
+    SearchCityUseCase,
 } from "./application/use-cases";
 
 const controllers = [
     DocumentTypeController,
     DocumentController,
     PersonController,
+    CityController,
 ];
 
 const useCases = [
@@ -67,6 +71,9 @@ const useCases = [
     LinkNinUseCase,
     UpgradeTierUseCase,
     ChangePasswordUseCase,
+    // City & State
+    GetStateUseCase,
+    SearchCityUseCase,
 ];
 
 @Module({
@@ -75,6 +82,7 @@ const useCases = [
             PersonOrmEntity,
             DocumentOrmEntity,
             DocumentTypeOrmEntity,
+            CityOrmEntity,
         ])
     ],
     controllers: [...controllers],
@@ -86,6 +94,7 @@ const useCases = [
         { provide: PERSON_REPOSITORY, useClass: PersonTypeOrmRepository },
         { provide: DOCUMENT_REPOSITORY, useClass: DocumentTypeOrmRepository },
         { provide: DOCUMENT_TYPE_REPOSITORY, useClass: DocumentTypeTypeOrmRepository },
+        { provide: CITY_REPOSITORY, useClass: CityTypeOrmRepository },
         { provide: IDENTITY_VERIFICATION_SERVICE, useClass: MockIdentifierService }
     ],
     exports: [
@@ -96,6 +105,7 @@ const useCases = [
         PERSON_REPOSITORY,
         DOCUMENT_REPOSITORY,
         DOCUMENT_TYPE_REPOSITORY,
+        CITY_REPOSITORY,
         IDENTITY_VERIFICATION_SERVICE
     ],
 })

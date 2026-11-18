@@ -11,6 +11,7 @@ export const envValidationSchema = Joi.object({
     .default('development'),
   PORT: Joi.number().port().default(3000),
   APP_NAME: Joi.string().default('fintech-backend'),
+  VERSION: Joi.number().default(1),
 
   // DATABASE
   DB_HOST: Joi.string().required(),

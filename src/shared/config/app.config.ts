@@ -4,4 +4,5 @@ export default registerAs('app', () => ({
   env: process.env.NODE_ENV ?? 'development',
   name: process.env.APP_NAME ?? 'fintech-backend',
   port: parseInt(process.env.PORT ?? '3000', 10),
+  version: parseInt(process.env.VERSION ?? '1', 10)
 }));

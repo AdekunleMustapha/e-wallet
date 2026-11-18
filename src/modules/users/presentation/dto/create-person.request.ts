@@ -1,6 +1,7 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsEnum, IsLowercase, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
 import { DOB_PATTERN } from "./dob";
-import { Country, Gender } from "../../domain/enums";
+import { Country, Gender, NigeriaState } from "../../domain/enums";
+import { TitleCase } from "src/shared/presentation/transform";
 
 export class CreatePersonRequest {
     @IsString()
@@ -33,13 +34,13 @@ export class CreatePersonRequest {
     @IsEnum(Gender)
     gender!: Gender;
 
+    @TitleCase()
     @IsEnum(Country)
     country!: Country;
 
-    @IsString()
-    @IsNotEmpty()
-    @MaxLength(100)
-    state!: string;
+    @TitleCase()
+    @IsEnum(NigeriaState)
+    state!: NigeriaState;
 
     @IsString()
     @IsNotEmpty()
