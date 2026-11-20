@@ -6,7 +6,7 @@ export type DocumentOutput = {
     personId: string,
     documentType: DocumentTypeOutput,
     name: string,
-    link: string,
+    documentLink: string,
     verified: boolean,
     createdAt: Date,
     updatedAt: Date
@@ -21,7 +21,7 @@ export function toDocumentOutput(
         personId: document.personId.value,
         documentType,
         name: document.documentName,
-        link: document.documentLink,
+        documentLink: document.documentLink,
         verified: document.verified,
         createdAt: document.createdAt,
         updatedAt: document.updatedAt 
